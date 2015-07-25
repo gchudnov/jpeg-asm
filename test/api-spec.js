@@ -54,7 +54,8 @@ describe('JpegAsm', function () {
 
     var jpegBuffer = new Uint8Array(Module.HEAPU8.buffer, jpegBufferPtr, jpegBufferSize);
 
-    fs.writeFileSync('encoded-by-js.jpeg', new Buffer(jpegBuffer));
+    fs.mkdirSync(__dirname + '/out/');
+    fs.writeFileSync(__dirname + '/out/encoded-by-js.jpeg', new Buffer(jpegBuffer));
 
     Module._free(dataPtr);
     Module._free(jpegBufferPtrPtr);
@@ -64,7 +65,7 @@ describe('JpegAsm', function () {
     jpegBufferPtr.should.be.greaterThan(0);
   });
 
-  it.only('decodes JPEG', function () {
+  it('decodes JPEG', function () {
 
     var jpegBuffer = fs.readFileSync(__dirname + '/data/sample.jpg');
 
