@@ -1,0 +1,6 @@
+#ifndef JPEGASM_API_SPEC_H_IN_H
+#define JPEGASM_API_SPEC_H_IN_H
+
+#define TEST_DATA_DIR "@TEST_DATA_DIR@"
+
+#endif //JPEGASM_API_SPEC_H_IN_H

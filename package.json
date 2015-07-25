@@ -1,0 +1,18 @@
+{
+  "name": "jpeg-asm",
+  "version": "1.0.0",
+  "description": "libjpeg compiled into JavaScript",
+  "main": "build/jpeg-asm.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test"
+  },
+  "author": "Grigoriy Chudnov <g.chudnov@gmail.com> (https://github.com/gchudnov)",
+  "license": "MIT",
+  "dependencies": {
+    "mocha": "^2.2.5",
+    "should": "^7.0.2"
+  }
+}
