@@ -5,7 +5,7 @@ JPEG_NAME="jpeg-9a"
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)
 ROOT_DIR=$(readlink -f "${SCRIPT_DIR}/../")
-JPEG_DIR=$(readlink -f "${SCRIPT_DIR}/../../${JPEG_NAME}")
+JPEG_DIR=$(readlink -f "${SCRIPT_DIR}/../deps/${JPEG_NAME}")
 
 # print an error
 function fatal {
@@ -57,18 +57,18 @@ function jpeg {
   fi
 }
 
-function jpegasm_compile {
+function jpegasm_build {
 set -x
   pushd ${SCRIPT_DIR}
 
   EMCC=emcc
   CFLAGS="-std=c11"
 
-  JPEG_SO_PATH=../../${JPEG_NAME}/.libs/libjpeg.so
+  JPEG_SO_PATH=../deps/${JPEG_NAME}/.libs/libjpeg.so
 
   mkdir -p ${ROOT_DIR}/build
   cd ${ROOT_DIR}/build
-  ${EMCC} ${CFLAGS} -Wl,-l${JPEG_SO_PATH} ../jpegasm/api.c -I../../${JPEG_NAME} -o jpegasm.bc
+  ${EMCC} ${CFLAGS} -Wl,-l${JPEG_SO_PATH} ../jpegasm/api.c -I../deps/${JPEG_NAME} -o jpegasm.bc
   ${EMCC} ${CFLAGS} ${JPEG_SO_PATH} jpegasm.bc -s EXPORTED_FUNCTIONS=@../scripts/exported_functions -o jpegasm.js
 
   popd
@@ -78,7 +78,7 @@ set +x
 
 # build libjpegasm
 function jpegasm {
-  jpegasm_compile
+  jpegasm_build
 }
 
 # Build the specified library
