@@ -70,16 +70,18 @@ set +x
 
 # build libjpeg
 function jpeg {
+  if [[ $CLEAN -eq 1 ]]; then
+    set +e
+    clean_jpeg
+    set -e
+  fi
+
   if [[ $CONFIGURE -eq 1 ]]; then
     configure_jpeg
   fi
 
   if [[ $MAKE -eq 1 ]]; then
     make_jpeg
-  fi
-
-  if [[ $CLEAN -eq 1 ]]; then
-    clean_jpeg
   fi
 }
 

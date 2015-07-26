@@ -2,13 +2,24 @@
   "name": "jpeg-asm",
   "version": "0.9.0",
   "description": "libjpeg compiled into JavaScript",
-  "main": "build/jpeg-asm.js",
+  "main": "dist/jpegasm.js",
   "directories": {
-    "test": "test"
+    "test": "test",
+    "test-release": "test-release"
   },
   "scripts": {
-    "test": "mocha test"
+    "test-debug": "mocha test",
+    "test": "mocha test-release",
+    "build-debug": "./scripts/embuild.sh --lib=jpeg --purge --configure --make --debug && ./scripts/embuild.sh --lib=jpegasm --debug && cp ./build/jpegasm.js ./dist/jpegasm.js",
+    "build": "./scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm && cp ./build/jpegasm.js ./dist/jpegasm.js"
   },
+  "keywords": [
+    "jpeg",
+    "image",
+    "libjpeg",
+    "decode",
+    "encode"
+  ],
   "author": "Grigoriy Chudnov <g.chudnov@gmail.com> (https://github.com/gchudnov)",
   "license": "MIT",
   "dependencies": {

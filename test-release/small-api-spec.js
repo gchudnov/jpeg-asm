@@ -4,12 +4,10 @@
 // Can be run only for RELEASE-version
 //
 
-var api = require('./../build/jpegasm');
+var api = require('./../dist/jpegasm');
 
 var should = require('should');
 var fs = require('fs');
-
-console.log(api);
 
 describe('JpegAsm', function () {
 
@@ -53,7 +51,7 @@ describe('JpegAsm', function () {
     });
 
     it('decodes JPEG', function() {
-      var jpegBuffer = fs.readFileSync(__dirname + '/data/sample.jpg');
+      var jpegBuffer = fs.readFileSync(__dirname + '/../test/data/sample.jpg');
       var jpegArray = new ArrayBuffer(jpegBuffer.length);
       var jpegView = new Uint8Array(jpegArray);
       for(var i = 0; i != jpegBuffer.length; ++i) {

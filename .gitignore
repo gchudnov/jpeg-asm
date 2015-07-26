@@ -3,4 +3,5 @@ build/
 deps/
 node_modules/
 test/out/
+test-release/out/
 test/api-spec.h
