@@ -32,21 +32,27 @@ Options:
     -l=*|--lib=*    Library to process: jpeg | jpegasm.
     -c|--configure  Configure the library.
     -m|--make       Make the library.
+    -p|--purge      Invokes distclean.
 "
 }
 
 function configure_jpeg {
-  (cd ${JPEG_DIR}; emconfigure ./configure)
+  (cd ${JPEG_DIR}; emconfigure ./configure CFLAGS='-O2')
 }
 
 function make_jpeg {
   (cd ${JPEG_DIR}; emmake make)
 }
 
+function clean_jpeg {
+  (cd ${JPEG_DIR}; make distclean)
+}
+
 # build libjpeg
 function jpeg {
   local is_confugure=$1
   local is_make=$2
+  local is_clean=$3
 
   if [[ $is_confugure -eq 1 ]]; then
     configure_jpeg
@@ -55,6 +61,10 @@ function jpeg {
   if [[ $is_make -eq 1 ]]; then
     make_jpeg
   fi
+
+  if [[ is_clean -eq 1 ]]; then
+    clean_jpeg
+  fi
 }
 
 function jpegasm_build {
@@ -62,7 +72,7 @@ set -x
   pushd ${SCRIPT_DIR}
 
   EMCC=emcc
-  CFLAGS="-std=c11"
+  CFLAGS="-std=c11 -O3 --closure 1 --memory-init-file 0 -s MODULARIZE=1"
 
   JPEG_SO_PATH=../deps/${JPEG_NAME}/.libs/libjpeg.so
 
@@ -87,7 +97,7 @@ function lib {
 
   if [[ $1 =~ ^(jpeg|jpegasm)$ ]]; then
     if [[ $1 == "jpeg" ]]; then
-      jpeg $2 $3
+      jpeg $2 $3 $4
     else
       jpegasm
     fi
@@ -106,6 +116,7 @@ fi
 LIBNAME=
 CONFIGURE=0
 MAKE=0
+CLEAN=0
 
 for i in "$@"
 do
@@ -122,6 +133,10 @@ do
       MAKE=1
       shift
       ;;
+      -p|--purge)
+      CLEAN=1
+      shift
+      ;;
       -h|--help)
       usage
       shift
@@ -134,4 +149,4 @@ do
   esac
 done
 
-lib ${LIBNAME} ${CONFIGURE} ${MAKE}
+lib ${LIBNAME} ${CONFIGURE} ${MAKE} ${CLEAN}
