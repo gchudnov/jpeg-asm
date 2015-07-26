@@ -1,3 +1,5 @@
+#define _GNU_SOURCE 1
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,15 +20,6 @@ void handle_exit(j_common_ptr cinfo) {
   (*(cinfo->err->format_message)) (cinfo, perr->msg_str);
 
   longjmp(perr->setjmp_buffer, 1);
-}
-
-char* strdup(const char *str) {
-  size_t len = strlen(str);
-  char* new_str = malloc(len + 1);
-  if(new_str) {
-    strcpy(new_str, str);
-  }
-  return new_str;
 }
 
 /**
