@@ -27,9 +27,11 @@ $ npm run build-debug
 ```
 
 
-### `npm run build-*` invokes the following commands:
+## Internal Details
 
-#### Building `jpeg` with emscripten
+`npm run build-*` invokes the following commands:
+
+### Building `jpeg` with emscripten
 ```bash
 $ cd jpeg-asm/
 $ ./scripts/embuild.sh --lib=jpeg --purge
@@ -37,7 +39,7 @@ $ ./scripts/embuild.sh --lib=jpeg --configure
 $ ./scripts/embuild.sh --lib=jpeg --make
 ```
 
-#### Building `jpegasm` with emscripten
+### Building `jpegasm` with emscripten
 ```bash
 $ cd jpeg-asm/
 $ ./scripts/embuild.sh --lib=jpegasm
