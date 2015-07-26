@@ -1,6 +1,6 @@
 {
   "name": "jpeg-asm",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "libjpeg compiled into JavaScript",
   "main": "build/jpeg-asm.js",
   "directories": {
