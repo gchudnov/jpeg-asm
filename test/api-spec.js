@@ -28,8 +28,8 @@ describe('JpegAsm', function () {
   });
 
   // wrap functions
-  var encodeJpeg = Module.cwrap('encode_jpeg', undefined, ['number', 'number', 'number', 'number', 'number', 'number']);
-  var decodeJpeg = Module.cwrap('decode_jpeg', undefined, ['number', 'number', 'number', 'number', 'number']);
+  var encodeJpeg = Module.cwrap('encode_jpeg', 'number', ['number', 'number', 'number', 'number', 'number', 'number', 'number']);
+  var decodeJpeg = Module.cwrap('decode_jpeg', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
 
 
   it('encodes JPEG', function () {
@@ -42,23 +42,33 @@ describe('JpegAsm', function () {
 
     var jpegBufferPtrPtr = Module._malloc(Uint32Array.BYTES_PER_ELEMENT);
     var jpegBufferSizePtr = Module._malloc(Uint32Array.BYTES_PER_ELEMENT * 2);
+    var outMsgPtrPtr = Module._malloc(Uint32Array.BYTES_PER_ELEMENT);
 
-    encodeJpeg(dataPtr, rgbWidth, rgbHeight, quality, jpegBufferPtrPtr, jpegBufferSizePtr);
+    // invoke
+    var result = encodeJpeg(dataPtr, rgbWidth, rgbHeight, quality, jpegBufferPtrPtr, jpegBufferSizePtr, outMsgPtrPtr);
 
-    var jpegBufferSize = Module.getValue(jpegBufferSizePtr, 'i64');
     var jpegBufferPtr = Module.getValue(jpegBufferPtrPtr, 'i32');
+    var jpegBufferSize = Module.getValue(jpegBufferSizePtr, 'i64');
+    var outMsgPtr = Module.getValue(outMsgPtrPtr, 'i32');
 
     var jpegBuffer = new Uint8Array(Module.HEAPU8.buffer, jpegBufferPtr, jpegBufferSize);
 
-    fs.mkdirSync(__dirname + '/out/');
-    fs.writeFileSync(__dirname + '/out/encoded-by-js.jpeg', new Buffer(jpegBuffer));
+    var outDir = __dirname + '/out';
+    if(!fs.existsSync(outDir)) {
+      fs.mkdirSync(outDir);
+    }
+    fs.writeFileSync(outDir + '/encoded-by-js.jpeg', new Buffer(jpegBuffer));
 
-    Module._free(dataPtr);
-    Module._free(jpegBufferPtrPtr);
-    Module._free(jpegBufferSizePtr);
-
+    result.should.be.equal(0);
     jpegBufferSize.should.be.greaterThan(0);
     jpegBufferPtr.should.be.greaterThan(0);
+
+    Module._free(dataPtr);
+    Module._free(jpegBufferPtr);
+    Module._free(jpegBufferPtrPtr);
+    Module._free(jpegBufferSizePtr);
+    Module._free(outMsgPtr);
+    Module._free(outMsgPtrPtr);
   });
 
   it('decodes JPEG', function () {
@@ -75,13 +85,15 @@ describe('JpegAsm', function () {
     var outBufferPtrPtr = Module._malloc(Uint32Array.BYTES_PER_ELEMENT);
     var outBufferWidthPtr = Module._malloc(Uint32Array.BYTES_PER_ELEMENT);
     var outBufferHeightPtr = Module._malloc(Uint32Array.BYTES_PER_ELEMENT);
+    var outMsgPtrPtr = Module._malloc(Uint32Array.BYTES_PER_ELEMENT);
 
-    decodeJpeg(dataPtr, nDataBytes, outBufferPtrPtr, outBufferWidthPtr, outBufferHeightPtr);
+    var result = decodeJpeg(dataPtr, nDataBytes, outBufferPtrPtr, outBufferWidthPtr, outBufferHeightPtr, outMsgPtrPtr);
 
     var outBufferPtr = Module.getValue(outBufferPtrPtr, 'i32');
     var outBufferWidth = Module.getValue(outBufferWidthPtr, 'i32');
     var outBufferHeight = Module.getValue(outBufferHeightPtr, 'i32');
 
+    result.should.be.equal(0);
     outBufferPtr.should.be.greaterThan(0);
     outBufferWidth.should.be.equal(32);
     outBufferHeight.should.be.equal(32);
@@ -89,9 +101,53 @@ describe('JpegAsm', function () {
     //var rgbHeap = new Uint8Array(Module.HEAPU8.buffer, outBufferPtr, outBufferWidth * outBufferHeight * 3);
 
     Module._free(dataPtr);
+    Module._free(outBufferPtr);
     Module._free(outBufferPtrPtr);
     Module._free(outBufferWidthPtr);
     Module._free(outBufferHeightPtr);
+    Module._free(outMsgPtrPtr);
+  });
+
+  it('cannot encode the image with invalid dimensions', function () {
+    var quality = 80;
+
+    var nDataBytes = rgbBuffer.byteLength;
+    var dataPtr = Module._malloc(nDataBytes);
+    var dataHeap = new Uint8Array(Module.HEAPU8.buffer, dataPtr, nDataBytes);
+    dataHeap.set(new Uint8Array(rgbBuffer));
+
+    var jpegBufferPtrPtr = Module._malloc(Uint32Array.BYTES_PER_ELEMENT);
+    var jpegBufferSizePtr = Module._malloc(Uint32Array.BYTES_PER_ELEMENT * 2);
+    var outMsgPtrPtr = Module._malloc(Uint32Array.BYTES_PER_ELEMENT);
+
+    // invoke
+    var result = encodeJpeg(dataPtr, 0, 0, quality, jpegBufferPtrPtr, jpegBufferSizePtr, outMsgPtrPtr);
+
+    var jpegBufferPtr = Module.getValue(jpegBufferPtrPtr, 'i32');
+    var jpegBufferSize = Module.getValue(jpegBufferSizePtr, 'i64');
+    var outMsgPtr = Module.getValue(outMsgPtrPtr, 'i32');
+
+    var outMsg = Module.Pointer_stringify(outMsgPtr);
+
+    console.log(dataPtr);
+    console.log(jpegBufferPtr);
+    console.log(jpegBufferPtrPtr);
+    console.log(jpegBufferSizePtr);
+    console.log(outMsgPtr);
+    console.log(outMsgPtrPtr);
+
+    result.should.be.equal(33);
+    jpegBufferSize.should.be.greaterThan(0);
+    jpegBufferPtr.should.be.greaterThan(0);
+    outMsgPtr.should.be.greaterThan(0);
+    outMsg.should.be.equal('Empty JPEG image (DNL not supported)');
+
+    Module._free(dataPtr);
+    Module._free(jpegBufferPtr);
+    Module._free(jpegBufferPtrPtr);
+    Module._free(jpegBufferSizePtr);
+    Module._free(outMsgPtr);
+    Module._free(outMsgPtrPtr);
   });
 });
 
