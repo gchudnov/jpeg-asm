@@ -34,7 +34,10 @@ void handle_exit(j_common_ptr cinfo) {
  * @param out_msg An error message, if any [must be freed by the caller via `free`].
  * @return 0 if there is no error, otherwise a error code, see 'jerror.h' for details.
  */
-int encode_jpeg(unsigned char* rgb_buffer, unsigned int rgb_width, unsigned int rgb_height, int quality, unsigned char** out_buffer, unsigned long* out_size, char** out_msg) {
+int encode_jpeg(unsigned char* rgb_buffer, unsigned int rgb_width, unsigned int rgb_height, int quality, unsigned char** out_buffer, unsigned int* out_size, char** out_msg) {
+  unsigned char* out_buffer_ret = NULL;
+  unsigned long out_size_ret = 0;
+
   struct jpeg_compress_struct cinfo;
 
   struct basic_jpeg_error_mgr jerr;
@@ -45,6 +48,10 @@ int encode_jpeg(unsigned char* rgb_buffer, unsigned int rgb_width, unsigned int 
     *out_msg = strdup(jerr.msg_str);
 
     jpeg_destroy_compress(&cinfo);
+
+    if(out_buffer_ret) {
+      free(out_buffer_ret);
+    }
 
     return result;
   }
@@ -60,7 +67,7 @@ int encode_jpeg(unsigned char* rgb_buffer, unsigned int rgb_width, unsigned int 
 
   jpeg_set_quality(&cinfo, quality, TRUE);
 
-  jpeg_mem_dest(&cinfo, out_buffer, out_size);
+  jpeg_mem_dest(&cinfo, &out_buffer_ret, &out_size_ret);
 
   jpeg_start_compress(&cinfo, TRUE);
 
@@ -73,6 +80,9 @@ int encode_jpeg(unsigned char* rgb_buffer, unsigned int rgb_width, unsigned int 
 
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
+
+  *out_buffer = out_buffer_ret;
+  *out_size = (unsigned int)out_size_ret;
 
   return 0;
 }
@@ -89,7 +99,7 @@ int encode_jpeg(unsigned char* rgb_buffer, unsigned int rgb_width, unsigned int 
  * @param out_msg An error message, if any [must be freed by the caller via `free`].
  * @return 0 if there is no error, otherwise a error code, see 'jerror.h' for details.
  */
-int decode_jpeg(unsigned char* jpeg_buffer, unsigned long jpeg_size, unsigned char** out_buffer, unsigned int* out_width,  unsigned int* out_height, char** out_msg) {
+int decode_jpeg(unsigned char* jpeg_buffer, unsigned int jpeg_size, unsigned char** out_buffer, unsigned int* out_width,  unsigned int* out_height, char** out_msg) {
   struct jpeg_decompress_struct cinfo;
 
   struct basic_jpeg_error_mgr jerr;
