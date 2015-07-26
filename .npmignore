@@ -1,0 +1,8 @@
+.idea
+build
+deps
+jpegasm
+node_modules
+scripts
+test
+test-release

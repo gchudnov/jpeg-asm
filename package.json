@@ -13,6 +13,10 @@
     "build-debug": "./scripts/embuild.sh --lib=jpeg --purge --configure --make --debug && ./scripts/embuild.sh --lib=jpegasm --debug && cp ./build/jpegasm.js ./dist/jpegasm.js",
     "build": "./scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm && cp ./build/jpegasm.js ./dist/jpegasm.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gchudnov/jpeg-asm.git"
+  },
   "keywords": [
     "jpeg",
     "image",
@@ -22,7 +26,11 @@
   ],
   "author": "Grigoriy Chudnov <g.chudnov@gmail.com> (https://github.com/gchudnov)",
   "license": "MIT",
-  "dependencies": {
+  "bugs": {
+    "url": "https://github.com/gchudnov/jpeg-asm/issues"
+  },
+  "homepage": "https://github.com/gchudnov/jpeg-asm",
+  "devDependencies": {
     "mocha": "^2.2.5",
     "should": "^7.0.2"
   }
