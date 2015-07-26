@@ -66,7 +66,7 @@ Returns:
 Throws an exception in case of any error.
 
 ```javascript
-var encoded = inkjet.encode(buf, width, height, 80);
+var encoded = jpegasm.encode(buf, width, height, 80);
 ```
 
 ## Tests
