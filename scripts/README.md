@@ -21,14 +21,15 @@ $ npm run build
 
 OR 
 
-to build the `DEBUG` version:
+build the `DEBUG` version:
 ```bash
 $ npm run build-debug
 ```
 
+
 ### `npm run build-*` invokes the following commands:
 
-#### Building libjpeg with emscripten
+#### Building `jpeg` with emscripten
 ```bash
 $ cd jpeg-asm/
 $ ./scripts/embuild.sh --lib=jpeg --purge
@@ -36,10 +37,10 @@ $ ./scripts/embuild.sh --lib=jpeg --configure
 $ ./scripts/embuild.sh --lib=jpeg --make
 ```
 
-#### Building libjpegasm with emscripten
+#### Building `jpegasm` with emscripten
 ```bash
 $ cd jpeg-asm/
 $ ./scripts/embuild.sh --lib=jpegasm
 ```
 
-Add --debug to all 'embuild.sh' invocations to build the `DEBUG` version.
+NOTE: Add `--debug` to all 'embuild.sh' invocations to build the `DEBUG` version.
