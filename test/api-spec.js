@@ -162,4 +162,49 @@ describe('JpegAsm', function () {
     Runtime.stackRestore(stack);
   });
 
+  it('cannot decode a corrupted JPEG', function () {
+    var stack = Runtime.stackSave();
+
+    var jpegArrayBuffer = new ArrayBuffer(4);
+    var jpegView = new Uint8Array(jpegArrayBuffer);
+    jpegView[0] = 0xAA;
+    jpegView[1] = 0xBB;
+    jpegView[2] = 0xCC;
+    jpegView[3] = 0xDD;
+
+    var jpegBufferPtr = Module._malloc(jpegArrayBuffer.byteLength);
+    Module.HEAPU8.set(jpegView, jpegBufferPtr);
+
+    var outBufferPtrPtr = Runtime.stackAlloc(SIZE_OF_POINTER);
+    var outBufferWidthPtr = Runtime.stackAlloc(SIZE_OF_POINTER);
+    var outBufferHeightPtr = Runtime.stackAlloc(SIZE_OF_POINTER);
+    var outMsgPtrPtr = Runtime.stackAlloc(SIZE_OF_POINTER);
+
+    Module.setValue(outBufferPtrPtr, 0, 'i32');
+    Module.setValue(outBufferWidthPtr, 0, 'i32');
+    Module.setValue(outBufferHeightPtr, 0, 'i32');
+    Module.setValue(outMsgPtrPtr, 0, 'i32');
+
+    // invoke
+    var result = decode_jpeg(jpegBufferPtr, jpegArrayBuffer.byteLength, outBufferPtrPtr, outBufferWidthPtr, outBufferHeightPtr, outMsgPtrPtr);
+
+    var outBufferPtr = Module.getValue(outBufferPtrPtr, 'i32');
+    var outBufferWidth = Module.getValue(outBufferWidthPtr, 'i32');
+    var outBufferHeight = Module.getValue(outBufferHeightPtr, 'i32');
+    var outMsgPtr = Module.getValue(outMsgPtrPtr, 'i32');
+    var outMsg = Module.Pointer_stringify(outMsgPtr);
+
+    result.should.be.equal(55);
+    outBufferPtr.should.be.equal(0);
+    outBufferWidth.should.be.equal(0);
+    outBufferHeight.should.be.equal(0);
+    outMsg.should.be.equal('Not a JPEG file: starts with 0xaa 0xbb');
+
+    Module._free(jpegBufferPtr);
+    Module._free(outBufferPtr);
+    Module._free(outMsgPtr);
+
+    Runtime.stackRestore(stack);
+  });
+
 });
