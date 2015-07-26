@@ -66,7 +66,7 @@ protected:
 TEST_F(AJpegAsm, EncodesJpeg) {
   int quality = 80;
   unsigned char* jpeg_buffer = nullptr;
-  unsigned long jpeg_buffer_size = 0;
+  unsigned int jpeg_buffer_size = 0;
 
   char* out_msg = nullptr;
 
@@ -92,7 +92,7 @@ TEST_F(AJpegAsm, DecodesJpeg) {
 
   char* out_msg = nullptr;
 
-  int result = decode_jpeg(&jpeg_buffer[0], jpeg_buffer.size(), &new_buffer, &new_width, &new_height, &out_msg);
+  int result = decode_jpeg(&jpeg_buffer[0], (unsigned int)jpeg_buffer.size(), &new_buffer, &new_width, &new_height, &out_msg);
 
   ASSERT_EQ(0, result);
   ASSERT_TRUE(out_msg == nullptr);
@@ -112,7 +112,7 @@ TEST_F(AJpegAsm, CannotEncodeAnImageWithInvalidDimensions) {
   int quality = 80;
 
   unsigned char* jpeg_buffer = nullptr;
-  unsigned long jpeg_buffer_size = 0;
+  unsigned int jpeg_buffer_size = 0;
 
   char* out_msg = nullptr;
 
@@ -120,8 +120,6 @@ TEST_F(AJpegAsm, CannotEncodeAnImageWithInvalidDimensions) {
 
   ASSERT_EQ(33, result);
   ASSERT_TRUE(out_msg != nullptr);
-  ASSERT_TRUE(jpeg_buffer != nullptr);
-  ASSERT_GT(jpeg_buffer_size, 0);
 
   free(jpeg_buffer);
   free(out_msg);
@@ -136,7 +134,7 @@ TEST_F(AJpegAsm, CannotDecodeACorruptedImage) {
 
   char* out_msg = nullptr;
 
-  int result = decode_jpeg(&jpeg_buffer[0], jpeg_buffer.size(), &new_buffer, &new_width, &new_height, &out_msg);
+  int result = decode_jpeg(&jpeg_buffer[0], (unsigned int)jpeg_buffer.size(), &new_buffer, &new_width, &new_height, &out_msg);
 
   ASSERT_EQ(55, result);
   ASSERT_TRUE(out_msg != nullptr);
