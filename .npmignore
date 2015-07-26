@@ -6,3 +6,5 @@ node_modules
 scripts
 test
 test-release
+CMakeLists.txt
+shared.cmake
