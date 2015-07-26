@@ -1,5 +1,9 @@
 'use strict';
 
+//
+// Can be run only for DEBUG-version
+//
+
 var Module = require('./../build/jpegasm');
 var Runtime = Module['Runtime'];
 

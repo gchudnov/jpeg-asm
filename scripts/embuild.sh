@@ -7,6 +7,12 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)
 ROOT_DIR=$(readlink -f "${SCRIPT_DIR}/../")
 JPEG_DIR=$(readlink -f "${SCRIPT_DIR}/../deps/${JPEG_NAME}")
 
+LIBNAME=
+OPT_CONFIGURE=0
+OPT_MAKE=0
+OPT_CLEAN=0
+OPT_DEBUG=0
+
 # print an error
 function fatal {
   echo "$0:" "$@" >&2
@@ -33,57 +39,75 @@ Options:
     -c|--configure  Configure the library.
     -m|--make       Make the library.
     -p|--purge      Invokes distclean.
+    -d|--debug      Build the debuf version.
 "
 }
 
 function configure_jpeg {
-  (cd ${JPEG_DIR}; emconfigure ./configure CFLAGS='-O2')
+  CFLAGS=
+  if [[ $DEBUG -eq 1 ]]; then
+    CFLAGS=
+  else
+    CFLAGS='-O2'
+  fi
+
+set -x
+  (cd ${JPEG_DIR}; emconfigure ./configure CFLAGS=${CFLAGS})
+set +x
 }
 
 function make_jpeg {
+set -x
   (cd ${JPEG_DIR}; emmake make)
+set +x
 }
 
 function clean_jpeg {
+set -x
   (cd ${JPEG_DIR}; make distclean)
+set +x
 }
 
 # build libjpeg
 function jpeg {
-  local is_confugure=$1
-  local is_make=$2
-  local is_clean=$3
-
-  if [[ $is_confugure -eq 1 ]]; then
+  if [[ $CONFIGURE -eq 1 ]]; then
     configure_jpeg
   fi
 
-  if [[ $is_make -eq 1 ]]; then
+  if [[ $MAKE -eq 1 ]]; then
     make_jpeg
   fi
 
-  if [[ is_clean -eq 1 ]]; then
+  if [[ $CLEAN -eq 1 ]]; then
     clean_jpeg
   fi
 }
 
 function jpegasm_build {
-set -x
   pushd ${SCRIPT_DIR}
 
   EMCC=emcc
-  CFLAGS="-std=c11 -O3 --closure 1 --memory-init-file 0 -s MODULARIZE=1"
+  CFLAGS=
+  PRE_POST=
 
+  if [[ $DEBUG -eq 1 ]]; then
+    PRE_POST=
+    CFLAGS="-std=c11"
+  else
+    PRE_POST="--pre-js ../jpegasm/api-pre.partial.js --post-js ../jpegasm/api.partial.js --post-js ../jpegasm/api-post.partial.js"
+    CFLAGS="-std=c11 -O3 --closure 1 --memory-init-file 0"
+  fi
+
+set -x
   JPEG_SO_PATH=../deps/${JPEG_NAME}/.libs/libjpeg.so
 
   mkdir -p ${ROOT_DIR}/build
   cd ${ROOT_DIR}/build
   ${EMCC} ${CFLAGS} -Wl,-l${JPEG_SO_PATH} ../jpegasm/api.c -I../deps/${JPEG_NAME} -o jpegasm.bc
-  ${EMCC} ${CFLAGS} ${JPEG_SO_PATH} jpegasm.bc -s EXPORTED_FUNCTIONS=@../scripts/exported_functions -o jpegasm.js
+  ${EMCC} ${CFLAGS} ${PRE_POST} ${JPEG_SO_PATH} jpegasm.bc -s EXPORTED_FUNCTIONS=@../scripts/exported_functions -o jpegasm.js
+set +x
 
   popd
-
-set +x
 }
 
 # build libjpegasm
@@ -92,17 +116,15 @@ function jpegasm {
 }
 
 # Build the specified library
-function lib {
-  local libname=$1
-
-  if [[ $1 =~ ^(jpeg|jpegasm)$ ]]; then
-    if [[ $1 == "jpeg" ]]; then
-      jpeg $2 $3 $4
+function process_lib {
+  if [[ $LIBNAME =~ ^(jpeg|jpegasm)$ ]]; then
+    if [[ $LIBNAME == "jpeg" ]]; then
+      jpeg
     else
       jpegasm
     fi
   else
-    fatal "Invalid library: $1"
+    fatal "Invalid library:$LIBNAME"
   fi
 }
 
@@ -112,11 +134,6 @@ if [ $# -eq 0 ]; then
   exit
 fi
 
-
-LIBNAME=
-CONFIGURE=0
-MAKE=0
-CLEAN=0
 
 for i in "$@"
 do
@@ -137,6 +154,10 @@ do
       CLEAN=1
       shift
       ;;
+      -d|--debug)
+      DEBUG=1
+      shift
+      ;;
       -h|--help)
       usage
       shift
@@ -149,4 +170,4 @@ do
   esac
 done
 
-lib ${LIBNAME} ${CONFIGURE} ${MAKE} ${CLEAN}
+process_lib
