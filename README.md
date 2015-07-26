@@ -1,8 +1,6 @@
 # jpeg-asm
 
-> libjpeg compiled into JavaScript
-
-Based on `jpeg-9a` of 19-Jan-2014.
+> libjpeg compiled into JavaScript [`jpeg-9a` of 19-Jan-2014]
 
 ## Installation
 
