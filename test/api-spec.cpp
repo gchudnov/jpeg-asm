@@ -104,7 +104,7 @@ TEST_F(AJpegAsm, DecodesJpeg) {
   free(out_msg);
 }
 
-TEST_F(AJpegAsm, CannotEncodeImageWithInvalidDimensions) {
+TEST_F(AJpegAsm, CannotEncodeAnImageWithInvalidDimensions) {
   unsigned char* in_buffer = rgb_buffer;
   unsigned int in_width = 0;
   unsigned int in_height = 0;
@@ -127,7 +127,7 @@ TEST_F(AJpegAsm, CannotEncodeImageWithInvalidDimensions) {
   free(out_msg);
 }
 
-TEST_F(AJpegAsm, CannotDecodeCorruptedImage) {
+TEST_F(AJpegAsm, CannotDecodeACorruptedImage) {
   std::vector<unsigned char> jpeg_buffer{ 0xAA, 0xBB, 0xCC, 0xDD, 0xEE };
 
   unsigned char* new_buffer = nullptr;
