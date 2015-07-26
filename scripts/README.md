@@ -13,19 +13,22 @@ $ cd emsdk_portable/
 $ source ./emsdk_env.sh
 ```
 
-## AUTOMATICALLY
-Build the `RELEASE` version:
+## Invoke `npm run build-*` commands:
+Building the `RELEASE` version:
 ```bash
 $ npm run build
 ```
-OR to build the `DEBUG` version:
+
+OR 
+
+to build the `DEBUG` version:
 ```bash
 $ npm run build-debug
 ```
 
-## MANUALLY
+### `npm run build-*` invokes the following commands:
 
-### Build libjpeg with emscripten
+#### Building libjpeg with emscripten
 ```bash
 $ cd jpeg-asm/
 $ ./scripts/embuild.sh --lib=jpeg --purge
@@ -33,11 +36,10 @@ $ ./scripts/embuild.sh --lib=jpeg --configure
 $ ./scripts/embuild.sh --lib=jpeg --make
 ```
 
-### Build libjpegasm with emscripten
+#### Building libjpegasm with emscripten
 ```bash
 $ cd jpeg-asm/
 $ ./scripts/embuild.sh --lib=jpegasm
 ```
 
-
-To build the `DEBUG` version, add --debug to all 'embuild.sh' invocations.
+Add --debug to all 'embuild.sh' invocations to build the `DEBUG` version.
