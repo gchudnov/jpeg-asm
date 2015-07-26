@@ -84,7 +84,6 @@ TEST_F(AJpegAsm, EncodesJpeg) {
 }
 
 TEST_F(AJpegAsm, DecodesJpeg) {
-
   std::vector<unsigned char> jpeg_buffer = load_buffer(std::string(TEST_DIR) + "/data/sample.jpg");
 
   unsigned char* new_buffer = nullptr;
@@ -125,5 +124,24 @@ TEST_F(AJpegAsm, CannotEncodeImageWithInvalidDimensions) {
   ASSERT_GT(jpeg_buffer_size, 0);
 
   free(jpeg_buffer);
+  free(out_msg);
+}
+
+TEST_F(AJpegAsm, CannotDecodeCorruptedImage) {
+  std::vector<unsigned char> jpeg_buffer{ 0xAA, 0xBB, 0xCC, 0xDD, 0xEE };
+
+  unsigned char* new_buffer = nullptr;
+  unsigned int new_width = 0;
+  unsigned int new_height = 0;
+
+  char* out_msg = nullptr;
+
+  int result = decode_jpeg(&jpeg_buffer[0], jpeg_buffer.size(), &new_buffer, &new_width, &new_height, &out_msg);
+
+  ASSERT_EQ(55, result);
+  ASSERT_TRUE(out_msg != nullptr);
+  ASSERT_TRUE(new_buffer == nullptr);
+
+  free(new_buffer);
   free(out_msg);
 }
