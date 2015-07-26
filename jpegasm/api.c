@@ -2,22 +2,60 @@
 #include <stdlib.h>
 #include <string.h>
 #include <jpeglib.h>
+#include <setjmp.h>
 #include "api.h"
 
-/**
- * Encodes an RGB-buffer to a JPEG
- * @param rgb_buffer
- * @param rgb_width
- * @param rgb_height
- * @param quality
- * @param out_buffer
- * @param out_size
- */
-void encode_jpeg(unsigned char* rgb_buffer, unsigned int rgb_width, unsigned int rgb_height, int quality, unsigned char** out_buffer, unsigned long* out_size) {
-  struct jpeg_compress_struct cinfo;
-  struct jpeg_error_mgr jerr;
+struct basic_jpeg_error_mgr {
+    struct jpeg_error_mgr handler;
+    char msg_str[JMSG_LENGTH_MAX];
 
-  cinfo.err = jpeg_std_error(&jerr);
+    jmp_buf setjmp_buffer;
+};
+
+void handle_exit(j_common_ptr cinfo) {
+  struct basic_jpeg_error_mgr* perr = (struct basic_jpeg_error_mgr *)cinfo->err;
+
+  (*(cinfo->err->format_message)) (cinfo, perr->msg_str);
+
+  longjmp(perr->setjmp_buffer, 1);
+}
+
+char* strdup(const char *str) {
+  size_t len = strlen(str);
+  char* new_str = malloc(len + 1);
+  if(new_str) {
+    strcpy(new_str, str);
+  }
+  return new_str;
+}
+
+/**
+ * Encodes an RGB-buffer to a JPEG.
+ *
+ * @param rgb_buffer An RGB image.
+ * @param rgb_width Width of the image, pixels.
+ * @param rgb_height Height of the image, pixels.
+ * @param quality Quality: 0-100.
+ * @param out_buffer Encoded image (JPEG) [must be freed by the called via `free`].
+ * @param out_size Size of the encoded image, bytes.
+ * @param out_msg An error message, if any [must be freed by the caller via `free`].
+ * @return 0 if there is no error, otherwise a error code, see 'jerror.h' for details.
+ */
+int encode_jpeg(unsigned char* rgb_buffer, unsigned int rgb_width, unsigned int rgb_height, int quality, unsigned char** out_buffer, unsigned long* out_size, char** out_msg) {
+  struct jpeg_compress_struct cinfo;
+
+  struct basic_jpeg_error_mgr jerr;
+  cinfo.err = jpeg_std_error(&jerr.handler);
+  jerr.handler.error_exit = handle_exit;
+  if (setjmp(jerr.setjmp_buffer)) {
+    int result = jerr.handler.msg_code;
+    *out_msg = strdup(jerr.msg_str);
+
+    jpeg_destroy_compress(&cinfo);
+
+    return result;
+  }
+
   jpeg_create_compress(&cinfo);
 
   cinfo.image_width = rgb_width;
@@ -42,22 +80,37 @@ void encode_jpeg(unsigned char* rgb_buffer, unsigned int rgb_width, unsigned int
 
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
+
+  return 0;
 }
 
 
 /**
- * Decodes JPEG to an RGB buffer
- * @param jpeg_buffer
- * @param jpeg_size
- * @param out_buffer
- * @param out_width
- * @param out_height
+ * Decodes JPEG into an RGB buffer.
+ *
+ * @param jpeg_buffer Source JPEG buffer.
+ * @param jpeg_size Size of the JPEG buffer.
+ * @param out_buffer Output RGB buffer  [must be freed by the called via `free`].
+ * @param out_width Output buffer width.
+ * @param out_height Output buffer height.
+ * @param out_msg An error message, if any [must be freed by the caller via `free`].
+ * @return 0 if there is no error, otherwise a error code, see 'jerror.h' for details.
  */
-void decode_jpeg(unsigned char* jpeg_buffer, unsigned long jpeg_size, unsigned char** out_buffer, unsigned int* out_width,  unsigned int* out_height) {
+int decode_jpeg(unsigned char* jpeg_buffer, unsigned long jpeg_size, unsigned char** out_buffer, unsigned int* out_width,  unsigned int* out_height, char** out_msg) {
   struct jpeg_decompress_struct cinfo;
-  struct jpeg_error_mgr jerr;
 
-  cinfo.err = jpeg_std_error(&jerr);
+  struct basic_jpeg_error_mgr jerr;
+  cinfo.err = jpeg_std_error(&jerr.handler);
+  jerr.handler.error_exit = handle_exit;
+  if (setjmp(jerr.setjmp_buffer)) {
+    int result = jerr.handler.msg_code;
+    *out_msg = strdup(jerr.msg_str);
+
+    jpeg_destroy_decompress(&cinfo);
+
+    return result;
+  }
+
   jpeg_create_decompress(&cinfo);
 
   jpeg_mem_src(&cinfo, jpeg_buffer, jpeg_size);
@@ -82,4 +135,6 @@ void decode_jpeg(unsigned char* jpeg_buffer, unsigned long jpeg_size, unsigned c
 
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
+
+  return 0;
 }

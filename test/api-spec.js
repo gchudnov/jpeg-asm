@@ -23,10 +23,6 @@ describe('JpegAsm', function () {
     }
   }
 
-  function writeJpeg(fileName) {
-
-  }
-
   before(function () {
     initRgbImage();
   });

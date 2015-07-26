@@ -14,7 +14,7 @@ find_package(Threads)
 set(TEST_DIR ${ROOT_DIR}/test)
 
 # configure path to the data directory
-get_filename_component(TEST_DATA_DIR "data" ABSOLUTE)
+get_filename_component(TEST_DIR "." ABSOLUTE)
 configure_file(${TEST_DIR}/api-spec.h.in ${TEST_DIR}/api-spec.h)
 
 include_directories(${ROOT_DIR}/jpegasm)

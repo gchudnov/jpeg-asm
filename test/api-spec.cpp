@@ -67,30 +67,63 @@ TEST_F(AJpegAsm, EncodesJpeg) {
   int quality = 80;
   unsigned char* jpeg_buffer = nullptr;
   unsigned long jpeg_buffer_size = 0;
-  encode_jpeg(rgb_buffer, rgb_width, rgb_height, quality, &jpeg_buffer, &jpeg_buffer_size);
 
+  char* out_msg = nullptr;
+
+  int result = encode_jpeg(rgb_buffer, rgb_width, rgb_height, quality, &jpeg_buffer, &jpeg_buffer_size, &out_msg);
+
+  ASSERT_EQ(0, result);
+  ASSERT_TRUE(out_msg == nullptr);
   ASSERT_TRUE(jpeg_buffer != nullptr);
   ASSERT_GT(jpeg_buffer_size, 0);
 
-  save_buffer("encoded.jpg", jpeg_buffer, jpeg_buffer_size);
+  save_buffer(std::string(TEST_DIR) + "/out/encoded-by-cpp.jpg", jpeg_buffer, jpeg_buffer_size);
 
-  // NOTE: the caller is responsible to free the buffers
   free(jpeg_buffer);
+  free(out_msg);
 }
 
 TEST_F(AJpegAsm, DecodesJpeg) {
 
-  std::vector<unsigned char> jpeg_buffer = load_buffer(std::string(TEST_DATA_DIR) + "/sample.jpg");
+  std::vector<unsigned char> jpeg_buffer = load_buffer(std::string(TEST_DIR) + "/data/sample.jpg");
 
   unsigned char* new_buffer = nullptr;
   unsigned int new_width = 0;
   unsigned int new_height = 0;
-  decode_jpeg(&jpeg_buffer[0], jpeg_buffer.size(), &new_buffer, &new_width, &new_height);
 
+  char* out_msg = nullptr;
+
+  int result = decode_jpeg(&jpeg_buffer[0], jpeg_buffer.size(), &new_buffer, &new_width, &new_height, &out_msg);
+
+  ASSERT_EQ(0, result);
+  ASSERT_TRUE(out_msg == nullptr);
   ASSERT_TRUE(new_buffer != nullptr);
   ASSERT_EQ(32, new_width);
   ASSERT_EQ(32, new_height);
 
-  // NOTE: the caller is responsible to free the buffers
   free(new_buffer);
+  free(out_msg);
+}
+
+TEST_F(AJpegAsm, CannotEncodeImageWithInvalidDimensions) {
+  unsigned char* in_buffer = rgb_buffer;
+  unsigned int in_width = 0;
+  unsigned int in_height = 0;
+
+  int quality = 80;
+
+  unsigned char* jpeg_buffer = nullptr;
+  unsigned long jpeg_buffer_size = 0;
+
+  char* out_msg = nullptr;
+
+  int result = encode_jpeg(in_buffer, in_width, in_height, quality, &jpeg_buffer, &jpeg_buffer_size, &out_msg);
+
+  ASSERT_EQ(33, result);
+  ASSERT_TRUE(out_msg != nullptr);
+  ASSERT_TRUE(jpeg_buffer != nullptr);
+  ASSERT_GT(jpeg_buffer_size, 0);
+
+  free(jpeg_buffer);
+  free(out_msg);
 }
