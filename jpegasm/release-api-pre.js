@@ -6,5 +6,5 @@
   } else {
     root['jpegasm'] = factory();
   }
-}(this, function () {
+}(typeof window !== 'undefined' ? window : this, function () {
   var API = {};
