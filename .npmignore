@@ -1,6 +1,7 @@
 .idea
 build
 deps
+examples
 jpegasm
 node_modules
 scripts
