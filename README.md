@@ -2,7 +2,12 @@
 
 > libjpeg compiled into JavaScript
 
-_jpeg-9a of 19-Jan-2014_
+```
+jpeg-9a of 19-Jan-2014
+
+602K minified
+158K minified and gzipped
+```
 
 ## Installation
 
