@@ -39,7 +39,7 @@ Options:
     -c|--configure  Configure the library.
     -m|--make       Make the library.
     -p|--purge      Invokes distclean.
-    -d|--debug      Build the debuf version.
+    -d|--debug      Build the debug version.
 "
 }
 
