@@ -1,13 +1,9 @@
 'use strict';
 
-//
-// Can be run only for DEVELOPMENT-version
-//
-
-var Module = require('./../build/jpegasm');
+var Module = require('../build/jpegasm');
 var Runtime = Module['Runtime'];
 
-var api = require('././api');
+var api = require('../lib/api');
 var should = require('should');
 var fs = require('fs');
 

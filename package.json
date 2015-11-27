@@ -4,8 +4,7 @@
   "description": "Encoding and decoding JPEG via libjpeg",
   "main": "dist/jpegasm.js",
   "scripts": {
-    "test:development": "mocha test",
-    "test:production": "mocha test-release",
+    "test": "mocha test",
     "build:development": "scripts/embuild.sh --lib=jpeg --purge --configure --make --debug && ./scripts/embuild.sh --lib=jpegasm --debug && cp ./build/jpegasm.js ./dist/jpegasm.js",
     "build:production": "scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm && cp ./build/jpegasm.js ./dist/jpegasm.js"
   },
