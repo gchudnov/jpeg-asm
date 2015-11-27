@@ -1,7 +1,7 @@
 'use strict';
 
 //
-// Can be run only for DEBUG-version
+// Can be run only for DEVELOPMENT-version
 //
 
 var Module = require('./../build/jpegasm');
