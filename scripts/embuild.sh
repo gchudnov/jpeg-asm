@@ -96,10 +96,10 @@ function jpegasm_build {
 
   if [[ $DEBUG -eq 1 ]]; then
     PRE_POST=
-    CFLAGS="-std=c11"
+    CFLAGS="-std=c11 -s ALLOW_MEMORY_GROWTH=1"
   else
     PRE_POST=
-    CFLAGS="-std=c11 -O3 --memory-init-file 0"
+    CFLAGS="-std=c11 -O3 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
   fi
 
 set -x
