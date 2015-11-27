@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha test",
     "build:debug": "scripts/embuild.sh --lib=jpeg --purge --configure --make --debug && ./scripts/embuild.sh --lib=jpegasm --debug",
-    "build:release": "scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm"
+    "build:release": "scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm",
+    "build": "npm run build:release"
   },
   "repository": {
     "type": "git",
