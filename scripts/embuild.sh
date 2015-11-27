@@ -97,7 +97,7 @@ function jpegasm_build {
     PRE_POST=
     CFLAGS="-std=c11"
   else
-    PRE_POST="--pre-js ${SRC_DIR}/release-api-pre.js --post-js ${SRC_DIR}/release-api-body.js --post-js ${SRC_DIR}/release-api-post.js"
+    PRE_POST=
     CFLAGS="-std=c11 -O3 --closure 1 --memory-init-file 0"
   fi
 
