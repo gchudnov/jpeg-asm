@@ -6,7 +6,7 @@ JPEG_NAME="jpeg-9a"
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)
 ROOT_DIR=$(readlink -f "${SCRIPT_DIR}/../")
 JPEG_DIR=$(readlink -f "${SCRIPT_DIR}/../deps/${JPEG_NAME}")
-SRC_DIR="../jpegasm"
+SRC_DIR="../src/jpegasm"
 
 LIBNAME=
 OPT_CONFIGURE=0

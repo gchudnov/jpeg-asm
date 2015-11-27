@@ -9,7 +9,7 @@ include(${ROOT_DIR}/shared.cmake)
 find_package(JPEG REQUIRED)
 include_directories(${JPEG_INCLUDE_DIRS})
 
-set(JPEGASM_DIR ${ROOT_DIR}/jpegasm)
+set(JPEGASM_DIR ${ROOT_DIR}/src/jpegasm)
 
 set(JPEGASM_SOURCES
   ${JPEGASM_DIR}/api.c

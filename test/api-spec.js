@@ -7,7 +7,7 @@
 var Module = require('./../build/jpegasm');
 var Runtime = Module['Runtime'];
 
-var api = require('./../jpegasm/api');
+var api = require('././api');
 var should = require('should');
 var fs = require('fs');
 
