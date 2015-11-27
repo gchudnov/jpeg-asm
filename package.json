@@ -1,17 +1,13 @@
 {
   "name": "jpeg-asm",
-  "version": "0.9.1",
-  "description": "libjpeg compiled into JavaScript",
+  "version": "1.0.0",
+  "description": "Encoding and decoding JPEG via libjpeg",
   "main": "dist/jpegasm.js",
-  "directories": {
-    "test": "test",
-    "test-release": "test-release"
-  },
   "scripts": {
-    "test-debug": "mocha test",
-    "test": "mocha test-release",
-    "build-debug": "./scripts/embuild.sh --lib=jpeg --purge --configure --make --debug && ./scripts/embuild.sh --lib=jpegasm --debug && cp ./build/jpegasm.js ./dist/jpegasm.js",
-    "build": "./scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm && cp ./build/jpegasm.js ./dist/jpegasm.js"
+    "test:development": "mocha test",
+    "test:production": "mocha test-release",
+    "build:development": "scripts/embuild.sh --lib=jpeg --purge --configure --make --debug && ./scripts/embuild.sh --lib=jpegasm --debug && cp ./build/jpegasm.js ./dist/jpegasm.js",
+    "build:production": "scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm && cp ./build/jpegasm.js ./dist/jpegasm.js"
   },
   "repository": {
     "type": "git",
