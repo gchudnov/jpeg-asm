@@ -6,6 +6,7 @@ JPEG_NAME="jpeg-9a"
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)
 ROOT_DIR=$(readlink -f "${SCRIPT_DIR}/../")
 JPEG_DIR=$(readlink -f "${SCRIPT_DIR}/../deps/${JPEG_NAME}")
+SRC_DIR="../jpegasm"
 
 LIBNAME=
 OPT_CONFIGURE=0
@@ -96,7 +97,7 @@ function jpegasm_build {
     PRE_POST=
     CFLAGS="-std=c11"
   else
-    PRE_POST="--pre-js ../jpegasm/release-api-pre.js --post-js ../jpegasm/release-api-body.js --post-js ../jpegasm/release-api-post.js"
+    PRE_POST="--pre-js ${SRC_DIR}/release-api-pre.js --post-js ${SRC_DIR}/release-api-body.js --post-js ${SRC_DIR}/release-api-post.js"
     CFLAGS="-std=c11 -O3 --closure 1 --memory-init-file 0"
   fi
 
@@ -105,7 +106,7 @@ set -x
 
   mkdir -p ${ROOT_DIR}/build
   cd ${ROOT_DIR}/build
-  ${EMCC} ${CFLAGS} -Wl,-l${JPEG_SO_PATH} ../jpegasm/api.c -I../deps/${JPEG_NAME} -o jpegasm.bc
+  ${EMCC} ${CFLAGS} -Wl,-l${JPEG_SO_PATH} ${SRC_DIR}/api.c -I../deps/${JPEG_NAME} -o jpegasm.bc
   ${EMCC} ${CFLAGS} ${PRE_POST} ${JPEG_SO_PATH} jpegasm.bc -s EXPORTED_FUNCTIONS=@../scripts/exported_functions -o jpegasm.js
 set +x
 
