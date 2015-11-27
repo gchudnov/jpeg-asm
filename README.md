@@ -1,6 +1,6 @@
 # jpeg-asm
 
-> libjpeg compiled into JavaScript
+> encoding and decoding JPEG using libjpeg
 
 ```
 jpeg-9a of 19-Jan-2014
