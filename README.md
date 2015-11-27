@@ -1,6 +1,6 @@
 # jpeg-asm
 
-> encoding and decoding JPEG using libjpeg
+> Encoding and decoding JPEG via libjpeg
 
 ```
 jpeg-9a of 19-Jan-2014
