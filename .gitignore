@@ -1,5 +1,4 @@
 .idea
-build
 deps
 node_modules
 test/api-spec.h

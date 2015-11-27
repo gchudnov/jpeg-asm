@@ -5,8 +5,8 @@
   "main": "lib/api.js",
   "scripts": {
     "test": "mocha test",
-    "build:development": "scripts/embuild.sh --lib=jpeg --purge --configure --make --debug && ./scripts/embuild.sh --lib=jpegasm --debug",
-    "build:production": "scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm"
+    "build:debug": "scripts/embuild.sh --lib=jpeg --purge --configure --make --debug && ./scripts/embuild.sh --lib=jpegasm --debug",
+    "build:release": "scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm"
   },
   "repository": {
     "type": "git",

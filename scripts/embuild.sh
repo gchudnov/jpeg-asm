@@ -7,6 +7,7 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)
 ROOT_DIR=$(readlink -f "${SCRIPT_DIR}/../")
 JPEG_DIR=$(readlink -f "${SCRIPT_DIR}/../deps/${JPEG_NAME}")
 SRC_DIR="../src/jpegasm"
+SRC_LIB_DIR="../lib"
 
 LIBNAME=
 OPT_CONFIGURE=0
@@ -98,7 +99,7 @@ function jpegasm_build {
     CFLAGS="-std=c11"
   else
     PRE_POST=
-    CFLAGS="-std=c11 -O3 --closure 1 --memory-init-file 0"
+    CFLAGS="-std=c11 -O3 --memory-init-file 0"
   fi
 
 set -x
