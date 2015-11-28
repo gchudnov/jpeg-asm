@@ -7,6 +7,7 @@ import async from 'async';
 import once from 'once';
 import gulpIf from 'gulp-if';
 import uglify from 'gulp-uglify';
+import replace from 'gulp-replace';
 import bundleLogger from '../lib/bundle-logger';
 import handleErrors from '../lib/handle-errors';
 import { IS_PRODUCTION, BROWSERIFY } from '../config';
@@ -20,7 +21,7 @@ gulp.task('browserify', (next) => {
     cb = once(cb);
     let bundler = browserify({
       entries: bundleConfig.entries,
-      insertGlobals: false,
+      insertGlobals: true,
       detectGlobals: false,
       debug: BROWSERIFY.debug
       //standalone: "Jpegasm"
@@ -38,6 +39,7 @@ gulp.task('browserify', (next) => {
         .on('error', handleErrors)
         .pipe(source(bundleConfig.outputName))
         .pipe(buffer())
+        .pipe(replace(/&&\s*!ENVIRONMENT_IS_WEB\s*&&\s*!ENVIRONMENT_IS_WORKER/, ''))
         .pipe(gulpIf(IS_PRODUCTION, uglify())) // { mangle: false }
         .pipe(gulp.dest(bundleConfig.dest))
         .on('end', handleEnd);
