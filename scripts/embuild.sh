@@ -108,7 +108,7 @@ set -x
   mkdir -p ${ROOT_DIR}/build
   cd ${ROOT_DIR}/build
   ${EMCC} ${CFLAGS} -Wl,-l${JPEG_SO_PATH} ${SRC_DIR}/api.c -I../deps/${JPEG_NAME} -o lib${LIBNAME}.bc
-  ${EMCC} ${CFLAGS} ${PRE_POST} ${JPEG_SO_PATH} jpegasm.bc -s EXPORTED_FUNCTIONS=@../scripts/exported_functions -o lib${LIBNAME}.js
+  ${EMCC} ${CFLAGS} ${PRE_POST} ${JPEG_SO_PATH} lib${LIBNAME}.bc -s EXPORTED_FUNCTIONS=@../scripts/exported_functions -o lib${LIBNAME}.js
 set +x
 
   popd
