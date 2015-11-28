@@ -41,8 +41,8 @@ gulp.task('browserify', (next) => {
         .pipe(buffer())
         .pipe(replace(/&&\s*!ENVIRONMENT_IS_WEB\s*&&\s*!ENVIRONMENT_IS_WORKER/, '')) // PATCH: cannot detect NODE in a browser.
         .pipe(replace(/!!process\.platform\.match\(\/\^win\/\)/, 'false'))           // PATCH: process.platform is undefined
-        .pipe(replace(/process\[['"]stderr['"]\]\.write/, 'console.error'))                // PATCH: process.stderr is undefined
-        .pipe(replace(/process\[['"]stdout['"]\]\.write/, 'console.log'))                  // PATCH: process.stdout is undefined
+        .pipe(replace(/process\[['"]stderr['"]\]\.write/, 'console.error'))          // PATCH: process.stderr is undefined
+        .pipe(replace(/process\[['"]stdout['"]\]\.write/, 'console.log'))            // PATCH: process.stdout is undefined
         .pipe(gulpIf(IS_PRODUCTION, uglify())) // { mangle: false }
         .pipe(gulp.dest(bundleConfig.dest))
         .on('end', handleEnd);
