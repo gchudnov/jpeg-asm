@@ -3,7 +3,7 @@
 > Encoding and decoding images via libjpeg
 
 ```
-jpeg-9a of 19-Jan-2014
+version: jpeg-9a of 19-Jan-2014
 ```
 
 ## Installation
