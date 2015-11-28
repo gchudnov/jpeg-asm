@@ -22,7 +22,7 @@ Use `/dist/jpegasm.js` for a browser-friendly version of the library.
 ```javascript
 var jpegasm = require('jpeg-asm');
 
-var buf = new ArrayBuffer(N);
+var buf = new ArrayBuffer(...);
 // init buffer
 
 var decoded = jpegasm.decode(buf);
@@ -33,7 +33,7 @@ var decoded = jpegasm.decode(buf);
 ```javascript
 var jpegasm = require('jpeg-asm');
 
-var buf = new ArrayBuffer(N);
+var buf = new ArrayBuffer(...);
 // init buffer
 
 var width = X;
@@ -87,7 +87,7 @@ $ npm test
 
 ## Building
 
-To build a browser-friendly variant of the library, run `NODE_ENV=production npm run browser`.
+To build a browser-friendly version of the library, run `NODE_ENV=production npm run browser`.
 
 ## Contact
 
