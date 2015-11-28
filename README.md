@@ -17,6 +17,7 @@ OR
 
 Use `/dist/jpegasm.js` for a browser-friendly version of the library.
 
+- [Examples of usage](https://github.com/gchudnov/jpeg-asm/tree/master/examples)
 
 ### Decode JPEG
 ```javascript
