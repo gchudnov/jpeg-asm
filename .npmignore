@@ -1,11 +1,9 @@
 .idea
-build
 deps
 examples
-jpegasm
 node_modules
 scripts
 test
-test-release
 CMakeLists.txt
+gulpfile.js
 shared.cmake
