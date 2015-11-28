@@ -22,9 +22,9 @@ gulp.task('browserify', (next) => {
     let bundler = browserify({
       entries: bundleConfig.entries,
       insertGlobals: true,
-      detectGlobals: false,
-      debug: BROWSERIFY.debug
-      //standalone: "Jpegasm"
+      detectGlobals: true,
+      debug: BROWSERIFY.debug,
+      standalone: "jpegasm"
     });
 
     let handleEnd = () => {
@@ -39,7 +39,10 @@ gulp.task('browserify', (next) => {
         .on('error', handleErrors)
         .pipe(source(bundleConfig.outputName))
         .pipe(buffer())
-        .pipe(replace(/&&\s*!ENVIRONMENT_IS_WEB\s*&&\s*!ENVIRONMENT_IS_WORKER/, ''))
+        .pipe(replace(/&&\s*!ENVIRONMENT_IS_WEB\s*&&\s*!ENVIRONMENT_IS_WORKER/, '')) // PATCH: cannot detect NODE in a browser.
+        .pipe(replace(/NODEFS.isWindows\s*=\s*/, 'NODEFS.isWindows=false;//'))       // PATCH: process.platform is undefined
+        .pipe(replace(/process\['stderr'\]\.write/, 'console.error'))                // PATCH: process.stderr is undefined
+        .pipe(replace(/process\['stdout'\]\.write/, 'console.log'))                  // PATCH: process.stdout is undefined
         .pipe(gulpIf(IS_PRODUCTION, uglify())) // { mangle: false }
         .pipe(gulp.dest(bundleConfig.dest))
         .on('end', handleEnd);
