@@ -1,6 +1,6 @@
 'use strict';
 
-var Module = require('../build/jpegasm');
+var Module = require('../build/libjpegasm');
 var Runtime = Module['Runtime'];
 
 var api = require('../lib/api');
