@@ -3,7 +3,7 @@
 #include <vector>
 #include <stdexcept>
 #include "api-spec.h"
-#include "api.h"
+#include "./../src/jpegasm/api.h"
 
 using namespace std;
 

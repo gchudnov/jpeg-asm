@@ -4,8 +4,6 @@ project(jpegasm_test)
 get_filename_component(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" PATH)
 message(STATUS "ROOT_DIR: " ${ROOT_DIR})
 
-include(${ROOT_DIR}/shared.cmake)
-
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
