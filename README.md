@@ -13,6 +13,11 @@ installing with npm:
 $ npm install jpeg-asm --save
 ```
 
+OR
+
+Use `/dist/jpegasm.js` for a browser-friendly version of the library.
+
+
 ### Decode JPEG
 ```javascript
 var jpegasm = require('jpeg-asm');
@@ -79,6 +84,10 @@ To run the tests for _jpeg-asm_:
 ```bash
 $ npm test
 ```
+
+## Building
+
+To build a browser-friendly variant of the library, run `NODE_ENV=production npm run browser`.
 
 ## Contact
 
