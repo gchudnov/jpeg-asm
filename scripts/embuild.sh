@@ -48,26 +48,26 @@ Options:
 function configure_libjpeg() {
   CFLAGS=
   if [[ "${IS_DEBUG}" -eq 1 ]]; then
-    CFLAGS=
+    CFLAGS='-s LEGACY_GL_EMULATION=1'
   else
-    CFLAGS='-O2'
+    CFLAGS='-O2 -s LEGACY_GL_EMULATION=1'
   fi
 
-set -x
+  set -x
   (cd "${LIBJPEG_DIR}"; emconfigure ./configure CFLAGS="${CFLAGS}")
-set +x
+  set +x
 }
 
 function make_jpeg() {
-set -x
+  set -x
   (cd "${LIBJPEG_DIR}"; emmake make)
-set +x
+  set +x
 }
 
 function clean_jpeg() {
-set -x
+  set -x
   (cd "${LIBJPEG_DIR}"; make distclean)
-set +x
+  set +x
 }
 
 # build libjpeg
@@ -100,7 +100,7 @@ function build_jpegasm {
     CFLAGS="-std=c11 -s ALLOW_MEMORY_GROWTH=1"
   else
     PRE_POST=
-    CFLAGS="-std=c11 -O3 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
+    CFLAGS="-std=c11 -O2 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
   fi
 
   set -x
@@ -108,8 +108,8 @@ function build_jpegasm {
 
   mkdir -p "${ROOT_DIR}/build"
   cd "${ROOT_DIR}/build"
-  ${EMCC} "${CFLAGS}" -Wl,-l${JPEG_SO_PATH} ${JPEGASM_DIR}/api.c -I../deps/${LIBJPEG_NAME} -o lib${LIBNAME}.bc
-  ${EMCC} "${CFLAGS}" ${PRE_POST} ${JPEG_SO_PATH} lib${LIBNAME}.bc -s EXPORTED_FUNCTIONS=@../scripts/exported_functions -o lib${LIBNAME}.js
+  "${EMCC}" "${CFLAGS}" -Wl,-l${JPEG_SO_PATH} ${JPEGASM_DIR}/api.c -I../deps/${LIBJPEG_NAME} -o lib${LIBNAME}.bc
+  "${EMCC}" "${CFLAGS}" ${PRE_POST} ${JPEG_SO_PATH} lib${LIBNAME}.bc -s EXPORTED_FUNCTIONS=@../scripts/exported_functions -o lib${LIBNAME}.js
   set +x
 
   popd

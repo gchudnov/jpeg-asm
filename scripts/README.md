@@ -1,6 +1,29 @@
 # Building jpegasm
 
+## Download emscripten
+
+[Emscripten](https://emscripten.org/)
+
+```bash
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+
+# Download and install the latest SDK tools.
+./emsdk install latest
+
+# Make the "latest" SDK "active" for the current user. (writes .emscripten file)
+./emsdk activate latest
+
+# Activate PATH and other environment variables in the current terminal
+source ./emsdk_env.sh
+
+# Verify installation
+emcc -v
+```
+
 ## Download libjpeg
+
+[Independent JPEG Group](http://ijg.org)
 
 ```bash
 cd jpeg-asm/
@@ -9,13 +32,6 @@ mkdir -p deps && cd deps/
 export LIBJPEG_VERSION=9d
 wget "http://ijg.org/files/jpegsrc.v${LIBJPEG_VERSION}.tar.gz"
 tar -xzvf "jpegsrc.v${LIBJPEG_VERSION}.tar.gz"
-```
-
-## Source 'emsdk_env.sh'
-
-```bash
-cd emsdk_portable/
-source ./emsdk_env.sh
 ```
 
 ## Invoke build commands
