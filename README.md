@@ -81,7 +81,7 @@ var encoded = jpegasm.encode(buf, width, height, 80);
 
 ## Tests
 
-To run the tests for _jpeg-asm_:
+To run the tests for *jpeg-asm*:
 ```bash
 $ npm test
 ```
