@@ -1,13 +1,14 @@
 # Building jpegasm
 
-## Download and copy libjpeg to deps/:
+## Download libjpeg
 
 ```bash
-export LIBJPEG_VERSION=9d
-
 cd jpeg-asm/
-mkdir deps
-cp /path-to/jpeg-9a ./deps
+mkdir -p deps && cd deps/
+
+export LIBJPEG_VERSION=9d
+wget "http://ijg.org/files/jpegsrc.v${LIBJPEG_VERSION}.tar.gz"
+tar -xzvf "jpegsrc.v${LIBJPEG_VERSION}.tar.gz"
 ```
 
 ## Source 'emsdk_env.sh'
@@ -17,26 +18,21 @@ cd emsdk_portable/
 source ./emsdk_env.sh
 ```
 
-## Invoke `npm run build:*` commands:
-Build the `DEVELOPMENT` version:
+## Invoke build commands
+
+Build the `DEVELOPMENT / PRODUCTION` version:
 
 ```bash
 npm run build:debug
-```
-
-OR 
-
-Build the `PRODUCTION` version:
-
-```bash
+# OR
 npm run build:release
 ```
 
-## Internal Details
+### Build Details
 
 `npm run build:(debug|release)` invokes the following commands:
 
-Building `jpeg` with emscripten
+Building `jpeg` with emscripten.
 
 ```bash
 cd jpeg-asm/
@@ -45,7 +41,7 @@ cd jpeg-asm/
 ./scripts/embuild.sh --lib=jpeg --make
 ```
 
-Building `jpegasm` with emscripten
+Building `jpegasm` with emscripten.
 
 ```bash
 cd jpeg-asm/

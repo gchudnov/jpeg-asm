@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-LIBJPEG_NAME="jpeg-9a"
+LIBJPEG_NAME="jpeg-9d"
 
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)
