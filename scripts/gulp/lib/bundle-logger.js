@@ -16,6 +16,6 @@ export default {
   end(filepath) {
     let taskTime = process.hrtime(startTime);
     let prettyTime = prettyHrtime(taskTime);
-    log('Bundled', colors.green(filepath), 'in', gutil.colors.magenta(prettyTime));
+    log('Bundled', colors.green(filepath), 'in', colors.magenta(prettyTime));
   }
 };
