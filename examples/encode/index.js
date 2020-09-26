@@ -56,7 +56,7 @@
 
       var buf = imageData.data;
       jpegasm.encode(buf, imageData.width, imageData.height, 80);
-      displayInfo('Image encoded successfully');
+      displayInfo('Image encoded as JPEG successfully');
     } catch(err) {
       displayError(err);
     }
