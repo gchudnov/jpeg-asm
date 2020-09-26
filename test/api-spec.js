@@ -33,7 +33,7 @@ describe('JpegAsm', function () {
     if(!fs.existsSync(outDir)) {
       fs.mkdirSync(outDir);
     }
-    fs.writeFileSync(outDir + filename, new Buffer(arr));
+    fs.writeFileSync(outDir + filename, Buffer.from(arr));
   }
 
   before(function () {
