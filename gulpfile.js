@@ -1,7 +1,7 @@
 'use strict';
 
-require('babel-core/register');
+require("@babel/register")({})
 
-var requireDir = require('require-dir');
+const requireDir = require('require-dir');
 
 requireDir('./scripts/gulp/tasks', { recurse: true });

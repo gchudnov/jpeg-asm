@@ -1,5 +1,6 @@
 import gulp from 'gulp';
-import gutil from 'gulp-util';
+import log from 'fancy-log';
+import colors from 'ansi-colors';
 import browserify from 'browserify';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
@@ -14,8 +15,8 @@ import { IS_PRODUCTION, BROWSERIFY } from '../config';
 
 gulp.task('browserify', (next) => {
 
-  gutil.log('NODE_ENV:', gutil.colors.yellow(process.env.NODE_ENV));
-  gutil.log('IS_PRODUCTION:', gutil.colors.yellow(IS_PRODUCTION));
+  log('NODE_ENV:', colors.yellow(process.env.NODE_ENV));
+  log('IS_PRODUCTION:', colors.yellow(IS_PRODUCTION));
 
   async.each(BROWSERIFY.bundleConfigs, (bundleConfig, cb) => {
     cb = once(cb);
