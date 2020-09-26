@@ -6,5 +6,5 @@ scripts
 src
 test
 CMakeLists.txt
-gulpfile.js
+gulpfile.babel.js
 shared.cmake

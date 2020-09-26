@@ -13,8 +13,7 @@ import bundleLogger from '../lib/bundle-logger';
 import handleErrors from '../lib/handle-errors';
 import { IS_PRODUCTION, BROWSERIFY } from '../config';
 
-gulp.task('browserify', (next) => {
-
+function browserifyTask(next) {
   log('NODE_ENV:', colors.yellow(process.env.NODE_ENV));
   log('IS_PRODUCTION:', colors.yellow(IS_PRODUCTION));
 
@@ -52,4 +51,6 @@ gulp.task('browserify', (next) => {
     bundle();
 
   }, next);
-});
+}
+
+export { browserifyTask };
