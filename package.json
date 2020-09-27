@@ -8,7 +8,9 @@
     "build:debug": "scripts/embuild.sh --lib=jpeg --purge --configure --make --debug && ./scripts/embuild.sh --lib=jpegasm --debug",
     "build:release": "scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm",
     "build": "npm run build:release",
-    "browser": "gulp"
+    "browser:debug": "gulp",
+    "browser:release": "NODE_ENV=production gulp",
+    "browser": "npm run browser:release"
   },
   "repository": {
     "type": "git",
@@ -19,7 +21,9 @@
     "image",
     "libjpeg",
     "decode",
-    "encode"
+    "encode",
+    "load",
+    "save"
   ],
   "author": "Grigoriy Chudnov <g.chudnov@gmail.com> (https://github.com/gchudnov)",
   "license": "MIT",

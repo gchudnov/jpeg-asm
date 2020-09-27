@@ -3,14 +3,14 @@
 > Encoding and decoding images via libjpeg
 
 ```
-version: jpeg-9a of 19-Jan-2014
+libjpeg version: 9d of 12-Jan-2020
 ```
 
 ## Installation
 
 installing with npm:
 ```bash
-$ npm install jpeg-asm --save
+npm install jpeg-asm --save
 ```
 
 OR
@@ -83,12 +83,18 @@ var encoded = jpegasm.encode(buf, width, height, 80);
 
 To run the tests for *jpeg-asm*:
 ```bash
-$ npm test
+npm test
 ```
 
 ## Building
 
-To build a browser-friendly version of the library, run `NODE_ENV=production npm run browser`.
+To build a browser-friendly version of the library, run:
+ 
+```bash
+npm run browser:debug
+# OR
+npm run browser:release  # builds minified version
+```
 
 ## Contact
 
@@ -97,6 +103,6 @@ To build a browser-friendly version of the library, run `NODE_ENV=production npm
 
 ## License
 
-jpeg-asm distributed under the [The MIT License (MIT)](https://github.com/gchudnov/inkjet/blob/master/LICENSE).
+jpeg-asm distributed under the [The MIT License (MIT)](LICENSE).
 
 libjpeg has a custom [BSD](https://en.wikipedia.org/wiki/BSD_licenses)-like license ([free software](https://en.wikipedia.org/wiki/Free_software)).
