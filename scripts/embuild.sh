@@ -88,7 +88,6 @@ function build_libjpeg() {
 }
 
 # build asm
-# TODO: -s USE_LIBJPEG
 function build_jpegasm {
   pushd "${SCRIPT_DIR}"
 
@@ -113,13 +112,14 @@ function build_jpegasm {
   C_API_PATH=$(readlink -f "${JPEGASM_DIR}/api.c")
   EXP_FUNC_PATH=$(readlink -f "../scripts/exported_functions")
 
-  # -s MAIN_MODULE=1
+  # TODO: check if -s MAIN_MODULE=1 is required
+  # TODO: '-s USE_LIBJPEG' can be used, but is pulls prev libjpeg version, 9c.
 
   set -x
   mkdir -p "${ROOT_DIR}/build"
   cd "${ROOT_DIR}/build"
   "${EMCC}" ${CFLAGS} "${C_API_PATH}" -I"${JPEG_INC_PATH}" -s SIDE_MODULE=1 -s EXPORT_ALL=1 -c -o lib"${LIBNAME}".bc
-  "${EMCC}" ${CFLAGS} "${PRE_POST}" "${JPEG_A_PATH}" lib${LIBNAME}.bc -s EXPORTED_FUNCTIONS=@"${EXP_FUNC_PATH}" -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap"]' -s WASM=0 -o lib"${LIBNAME}".js
+  "${EMCC}" ${CFLAGS} "${PRE_POST}" "${JPEG_A_PATH}" lib${LIBNAME}.bc -s EXPORTED_FUNCTIONS=@"${EXP_FUNC_PATH}" -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap", "setValue", "getValue", "UTF8ToString"]' -s WASM=0 -o lib"${LIBNAME}".js
   set +x
 
   popd
