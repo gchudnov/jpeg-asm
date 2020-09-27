@@ -48,19 +48,19 @@ Options:
 function configure_libjpeg() {
   CFLAGS=
   if [[ "${IS_DEBUG}" -eq 1 ]]; then
-    CFLAGS='-s LEGACY_GL_EMULATION=1'
+    CFLAGS='-fPIC -s EXPORT_ALL=1'
   else
-    CFLAGS='-O2 -s LEGACY_GL_EMULATION=1'
+    CFLAGS='-fPIC -O2 -s EXPORT_ALL=1'
   fi
 
   set -x
-  (cd "${LIBJPEG_DIR}"; emconfigure ./configure CFLAGS="${CFLAGS}")
+  (cd "${LIBJPEG_DIR}"; emconfigure ./configure --enable-shared=no --enable-static=yes CFLAGS="${CFLAGS}")
   set +x
 }
 
 function make_jpeg() {
   set -x
-  (cd "${LIBJPEG_DIR}"; emmake make)
+  (cd "${LIBJPEG_DIR}"; emmake make VERBOSE=1)
   set +x
 }
 
@@ -88,6 +88,7 @@ function build_libjpeg() {
 }
 
 # build asm
+# TODO: -s USE_LIBJPEG
 function build_jpegasm {
   pushd "${SCRIPT_DIR}"
 
@@ -97,19 +98,28 @@ function build_jpegasm {
 
   if [[ "${IS_DEBUG}" -eq 1 ]]; then
     PRE_POST=
-    CFLAGS="-std=c11 -s ALLOW_MEMORY_GROWTH=1"
+    CFLAGS="-std=c11 -fPIC -s ALLOW_MEMORY_GROWTH=1"
   else
     PRE_POST=
-    CFLAGS="-std=c11 -O2 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
+    CFLAGS="-std=c11 -fPIC -O2 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
   fi
 
-  set -x
-  local JPEG_SO_PATH=../deps/${LIBJPEG_NAME}/.libs/libjpeg.so
+  local JPEG_A_PATH=
+  local C_API_PATH=
+  local EXP_FUNC_PATH=
 
+  JPEG_A_PATH=$(readlink -f "../deps/${LIBJPEG_NAME}/.libs/libjpeg.a")
+  JPEG_INC_PATH=$(readlink -f "../deps/${LIBJPEG_NAME}")
+  C_API_PATH=$(readlink -f "${JPEGASM_DIR}/api.c")
+  EXP_FUNC_PATH=$(readlink -f "../scripts/exported_functions")
+
+  # -s MAIN_MODULE=1
+
+  set -x
   mkdir -p "${ROOT_DIR}/build"
   cd "${ROOT_DIR}/build"
-  "${EMCC}" "${CFLAGS}" -Wl,-l${JPEG_SO_PATH} ${JPEGASM_DIR}/api.c -I../deps/${LIBJPEG_NAME} -o lib${LIBNAME}.bc
-  "${EMCC}" "${CFLAGS}" ${PRE_POST} ${JPEG_SO_PATH} lib${LIBNAME}.bc -s EXPORTED_FUNCTIONS=@../scripts/exported_functions -o lib${LIBNAME}.js
+  "${EMCC}" ${CFLAGS} "${C_API_PATH}" -I"${JPEG_INC_PATH}" -s SIDE_MODULE=1 -s EXPORT_ALL=1 -c -o lib"${LIBNAME}".bc
+  "${EMCC}" ${CFLAGS} "${PRE_POST}" "${JPEG_A_PATH}" lib${LIBNAME}.bc -s EXPORTED_FUNCTIONS=@"${EXP_FUNC_PATH}" -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap"]' -s WASM=0 -o lib"${LIBNAME}".js
   set +x
 
   popd

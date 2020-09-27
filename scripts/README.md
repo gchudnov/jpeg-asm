@@ -2,8 +2,6 @@
 
 ## Download emscripten
 
-[Emscripten](https://emscripten.org/)
-
 ```bash
 git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk
@@ -19,11 +17,13 @@ source ./emsdk_env.sh
 
 # Verify installation
 emcc -v
+
+# output:
+# emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 2.0.4
+# ...
 ```
 
 ## Download libjpeg
-
-[Independent JPEG Group](http://ijg.org)
 
 ```bash
 cd jpeg-asm/
@@ -65,3 +65,9 @@ cd jpeg-asm/
 ```
 
 NOTE: Add `--debug` to all 'embuild.sh' invocations to build the `debug` version.
+
+## LINKS
+
+- [Independent JPEG Group](http://ijg.org)
+- [Emscripten](https://emscripten.org/)
+- [Linking](https://github.com/emscripten-core/emscripten/wiki/Linking)
