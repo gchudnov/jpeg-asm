@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master, "1.1.0" ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
