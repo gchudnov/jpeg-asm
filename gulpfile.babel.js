@@ -1,4 +1,6 @@
-require("@babel/register")({})
+'use strict';
+
+require("@babel/register")({});
 
 const { browserifyTask } = require('./scripts/gulp/tasks/browserify-task');
 
