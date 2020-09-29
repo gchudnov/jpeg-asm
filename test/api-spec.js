@@ -27,7 +27,7 @@ describe('JpegAsm', () => {
     const encode_jpeg = Module.cwrap('encode_jpeg', 'number', ['number', 'number', 'number', 'number', 'number', 'number', 'number']);
     const decode_jpeg = Module.cwrap('decode_jpeg', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
 
-    it('encodes JPEG', function () {
+    it('encodes JPEG', () => {
       const stack = Runtime.stackSave();
 
       const quality = 80;
@@ -69,7 +69,7 @@ describe('JpegAsm', () => {
       Runtime.stackRestore(stack);
     });
 
-    it('decodes JPEG', function () {
+    it('decodes JPEG', () => {
       const stack = Runtime.stackSave();
 
       const jpegBuffer = fs.readFileSync(__dirname + '/data/sample.jpg');
@@ -112,7 +112,7 @@ describe('JpegAsm', () => {
       Runtime.stackRestore(stack);
     });
 
-    it('cannot encode an image with invalid dimensions', function () {
+    it('cannot encode an image with invalid dimensions', () => {
       const stack = Runtime.stackSave();
 
       const quality = 80;
@@ -149,7 +149,7 @@ describe('JpegAsm', () => {
       Runtime.stackRestore(stack);
     });
 
-    it('cannot decode a corrupted JPEG', function () {
+    it('cannot decode a corrupted JPEG', () => {
       const stack = Runtime.stackSave();
 
       const jpegArrayBuffer = new ArrayBuffer(4);
