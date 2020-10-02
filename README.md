@@ -1,5 +1,7 @@
 # jpeg-asm
 
+![Node.js CI](https://github.com/gchudnov/jpeg-asm/workflows/Node.js%20CI/badge.svg)
+
 > Encoding and decoding images via libjpeg
 
 ```
