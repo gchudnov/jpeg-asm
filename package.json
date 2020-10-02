@@ -1,6 +1,6 @@
 {
   "name": "jpeg-asm",
-  "version": "1.1.0",
+  "version": "1.1.0-rc0",
   "description": "Encoding and decoding images via libjpeg",
   "main": "lib/api.js",
   "scripts": {
