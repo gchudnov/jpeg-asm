@@ -100,7 +100,7 @@ npm run browser:release  # builds minified version
 
 ## Contact
 
-[Grigoriy Chudnov] (mailto:g.chudnov@gmail.com)
+[Grigorii Chudnov] (mailto:g.chudnov@gmail.com)
 
 
 ## License
