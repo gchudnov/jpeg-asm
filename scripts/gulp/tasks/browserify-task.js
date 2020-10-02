@@ -40,7 +40,7 @@ function browserifyTask(next) {
         .pipe(source(bundleConfig.outputName))
         .pipe(buffer())
         .pipe(replace(/typeof process.versions.node/, "'string'"))
-        .pipe(gulpIf(IS_PRODUCTION, uglify())) // { mangle: false }
+        .pipe(gulpIf(IS_PRODUCTION, uglify()))
         .pipe(gulp.dest(bundleConfig.dest))
         .on('end', handleEnd);
     };

@@ -3,7 +3,7 @@
 const Module = require('../build/libjpegasm');
 const Runtime = Module;
 
-const api = require('../lib/api');
+const api = require('../src/bridge/index');
 const { initRgbImage } = require('./util/image');
 
 const should = require('should');

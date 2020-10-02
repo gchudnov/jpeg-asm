@@ -58,13 +58,13 @@ function configure_libjpeg() {
   set +x
 }
 
-function make_jpeg() {
+function make_libjpeg() {
   set -x
-  (cd "${LIBJPEG_DIR}"; emmake make VERBOSE=1)
+  (cd "${LIBJPEG_DIR}"; emmake make -j8 VERBOSE=1)
   set +x
 }
 
-function clean_jpeg() {
+function clean_libjpeg() {
   set -x
   (cd "${LIBJPEG_DIR}"; make distclean)
   set +x
@@ -74,7 +74,7 @@ function clean_jpeg() {
 function build_libjpeg() {
   if [[ "${IS_CLEAN}" -eq 1 ]]; then
     set +e
-    clean_jpeg
+    clean_libjpeg
     set -e
   fi
 
@@ -83,7 +83,7 @@ function build_libjpeg() {
   fi
 
   if [[ "${IS_MAKE}" -eq 1 ]]; then
-    make_jpeg
+    make_libjpeg
   fi
 }
 
@@ -100,7 +100,7 @@ function build_jpegasm {
     CFLAGS="-std=c11 -fPIC -s ALLOW_MEMORY_GROWTH=1"
   else
     PRE_POST=
-    CFLAGS="-std=c11 -fPIC -O2 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
+    CFLAGS="-std=c11 -fPIC -O3 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
   fi
 
   local JPEG_A_PATH=
