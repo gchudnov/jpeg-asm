@@ -1,5 +1,9 @@
+.github
 .idea
+CHANGELOG.md
 CMakeLists.txt
+README.md
+babel.config.json
 data
 deps
 examples

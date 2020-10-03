@@ -1,6 +1,6 @@
 {
   "name": "jpeg-asm",
-  "version": "2.0.0-rc0",
+  "version": "2.0.0",
   "description": "Encoding and decoding images via libjpeg",
   "main": "src/bridge/index.js",
   "scripts": {
