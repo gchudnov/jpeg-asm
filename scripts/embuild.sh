@@ -100,7 +100,7 @@ function build_jpegasm {
     CFLAGS="-std=c11 -fPIC -s ALLOW_MEMORY_GROWTH=1"
   else
     PRE_POST=
-    CFLAGS="-std=c11 -fPIC -O3 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
+    CFLAGS="-std=c11 -fPIC -O2 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
   fi
 
   local JPEG_A_PATH=

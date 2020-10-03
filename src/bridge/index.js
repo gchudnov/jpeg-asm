@@ -1,5 +1,5 @@
 'use strict';
 
-const api = require('./lib/api');
+var api = require('./lib/api');
 
 module.exports = api;
