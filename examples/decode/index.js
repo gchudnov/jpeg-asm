@@ -47,8 +47,13 @@
     reader.onload = function (event) {
       var buf = event.target.result;
       try {
-        var decoded = jpegasm.decode(buf);
-        displayDecodedData(decoded);
+        jpegasm.decode(buf, function(err, decoded) {
+          if(err) {
+            displayError(err);
+          } else {
+            displayDecodedData(decoded);
+          }
+        });
       } catch (err) {
         displayError(err);
       }

@@ -1,16 +1,15 @@
 {
   "name": "jpeg-asm",
-  "version": "1.1.0-rc0",
+  "version": "2.0.0-rc0",
   "description": "Encoding and decoding images via libjpeg",
   "main": "src/bridge/index.js",
   "scripts": {
     "test": "mocha test",
     "build:debug": "scripts/embuild.sh --lib=jpeg --purge --configure --make --debug && ./scripts/embuild.sh --lib=jpegasm --debug",
     "build:release": "scripts/embuild.sh --lib=jpeg --purge --configure --make && ./scripts/embuild.sh --lib=jpegasm",
-    "build": "npm run build:release",
     "browser:debug": "gulp",
     "browser:release": "NODE_ENV=production gulp",
-    "browser": "npm run browser:release"
+    "release": "npm run build:release && npm run browser:release"
   },
   "repository": {
     "type": "git",
@@ -43,6 +42,7 @@
     "gulp-if": "^3.0.0",
     "gulp-notify": "^3.2.0",
     "gulp-replace": "^1.0.0",
+    "gulp-terser": "^1.4.0",
     "gulp-uglify": "^3.0.2",
     "mocha": "^8.1.3",
     "once": "^1.4.0",

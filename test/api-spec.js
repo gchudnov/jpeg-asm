@@ -1,10 +1,12 @@
 'use strict';
 
+// low-level API
 const Module = require('../build/libjpegasm');
 const Runtime = Module;
 
+// high-level API
 const api = require('../src/bridge/index');
-const { initRgbImage } = require('./util/image');
+const {initRgbImage} = require('./util/image');
 
 const should = require('should');
 const fs = require('fs');
@@ -15,7 +17,7 @@ describe('JpegAsm', () => {
 
   function saveFile(arr, filename) {
     const outDir = __dirname + '/out/';
-    if(!fs.existsSync(outDir)) {
+    if (!fs.existsSync(outDir)) {
       fs.mkdirSync(outDir);
     }
     fs.writeFileSync(outDir + filename, Buffer.from(arr));
@@ -76,7 +78,7 @@ describe('JpegAsm', () => {
 
       const jpegBufferPtr = Module._malloc(jpegBuffer.length);
       const dataHeap = new Uint8Array(Module.HEAPU8.buffer, jpegBufferPtr, jpegBuffer.length);
-      for(let i = 0; i !== jpegBuffer.length; ++i) {
+      for (let i = 0; i !== jpegBuffer.length; ++i) {
         dataHeap[i] = jpegBuffer[i];
       }
 
@@ -198,57 +200,75 @@ describe('JpegAsm', () => {
 
   describe('High-Level API', () => {
 
-    it('encodes JPEG', () => {
-      const quality = 80;
-      const imageWidth = 32;
-      const imageHeight = 32;
-      const imageArray = initRgbImage(imageWidth, imageHeight);
+    it('encodes JPEG', (done) => {
+      const options = {
+        width: 32,
+        height: 32,
+        quality: 80
+      };
+      const imageArray = initRgbImage(options.width, options.height);
 
-      const encoded = api.encode(imageArray, imageWidth, imageHeight, quality);
 
-      encoded.byteLength.should.be.greaterThan(0);
+      api.encode(imageArray, options, (err, encoded) => {
+        should.not.exist(err);
+        should.exist(encoded);
+
+        encoded.byteLength.should.be.greaterThan(0);
+
+        done(err);
+      });
     });
 
-    it('decodes JPEG', () => {
+    it('decodes JPEG', (done) => {
       const jpegBuffer = fs.readFileSync(__dirname + '/data/sample.jpg');
       const jpegArray = new ArrayBuffer(jpegBuffer.length);
       const jpegView = new Uint8Array(jpegArray);
-      for(let i = 0; i !== jpegBuffer.length; ++i) {
+      for (let i = 0; i !== jpegBuffer.length; ++i) {
         jpegView[i] = jpegBuffer[i];
       }
 
-      const decodedObj = api.decode(jpegArray);
+      api.decode(jpegArray, (err, decoded) => {
+        should.not.exist(err);
+        should.exist(decoded);
 
-      decodedObj.buffer.byteLength.should.be.greaterThan(0);
-      decodedObj.width.should.be.equal(32);
-      decodedObj.height.should.be.equal(32);
+        decoded.buffer.byteLength.should.be.greaterThan(0);
+        decoded.width.should.be.equal(32);
+        decoded.height.should.be.equal(32);
+
+        done(err);
+      });
     });
 
-    it('cannot encode an image with invalid dimensions', () => {
-      (() => {
-        const quality = 80;
-        const imageWidth = 0;
-        const imageHeight = 0;
-        const imageArray = initRgbImage(imageWidth, imageHeight);
+    it('cannot encode an image with invalid dimensions', (done) => {
+      const options = {
+        quality: 80,
+        width: 0,
+        height: 0,
+      };
+      const imageArray = initRgbImage(options.width, options.height);
 
-        api.encode(imageArray, 0, 0, quality);
+      api.encode(imageArray, options, (err, encoded) => {
+        should.exist(err);
+        should.not.exist(encoded);
 
-      }).should.throw();
+        done(encoded);
+      });
     });
 
-    it('cannot decode a corrupted JPEG', () => {
-      (() => {
-        const jpegArrayBuffer = new ArrayBuffer(4);
-        const jpegView = new Uint8Array(jpegArrayBuffer);
-        jpegView[0] = 0xAA;
-        jpegView[1] = 0xBB;
-        jpegView[2] = 0xCC;
-        jpegView[3] = 0xDD;
+    it('cannot decode a corrupted JPEG', (done) => {
+      const jpegArrayBuffer = new ArrayBuffer(4);
+      const jpegView = new Uint8Array(jpegArrayBuffer);
+      jpegView[0] = 0xAA;
+      jpegView[1] = 0xBB;
+      jpegView[2] = 0xCC;
+      jpegView[3] = 0xDD;
 
-        api.decode(jpegArrayBuffer);
+      api.decode(jpegArrayBuffer, (err, decoded) => {
+        should.exist(err);
+        should.not.exist(decoded);
 
-      }).should.throw();
+        done(decoded);
+      });
     });
-
   });
 });
