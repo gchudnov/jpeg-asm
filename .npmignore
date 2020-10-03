@@ -1,10 +1,11 @@
 .idea
+CMakeLists.txt
+data
 deps
 examples
+gulpfile.babel.js
 node_modules
 scripts
-src
-test
-CMakeLists.txt
-gulpfile.babel.js
 shared.cmake
+src/jpegasm
+test
