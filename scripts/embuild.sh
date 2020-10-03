@@ -1,38 +1,37 @@
 #!/usr/bin/env bash
 set -e
 
-JPEG_NAME="jpeg-9a"
+LIBJPEG_NAME="jpeg-9d"
 
+SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)
 ROOT_DIR=$(readlink -f "${SCRIPT_DIR}/../")
-JPEG_DIR=$(readlink -f "${SCRIPT_DIR}/../deps/${JPEG_NAME}")
-SRC_DIR="../src/jpegasm"
-SRC_LIB_DIR="../lib"
+LIBJPEG_DIR=$(readlink -f "${SCRIPT_DIR}/../deps/${LIBJPEG_NAME}")
+JPEGASM_DIR="../src/jpegasm"
 
 LIBNAME=
-OPT_CONFIGURE=0
-OPT_MAKE=0
-OPT_CLEAN=0
-OPT_DEBUG=0
+
+IS_DEBUG=
+IS_CLEAN=
+IS_CONFIGURE=
+IS_MAKE=
 
 # print an error
-function fatal {
+function fatal() {
   echo "$0:" "$@" >&2
   exit 1
 }
 
+function usage() {
+  echo "Usage: ${SCRIPT_NAME} [OPTIONS]
 
-function usage {
-  script=$(basename "$0")
-  echo "Usage: $script [OPTIONS]
-
-Compiles libjpeg and libjpegasm into JavaScript.
+Builds libjpeg and libjpegasm.
 
 Examples:
-  $script --lib=jpeg --configure --make
+  ${SCRIPT_NAME} --lib=jpeg --configure --make
     - Configure & make libjpeg.
 
-  $script --lib=jpegasm
+  ${SCRIPT_NAME} --lib=jpegasm
     - Configure & make libjpegasm.
 
 Options:
@@ -45,90 +44,97 @@ Options:
 "
 }
 
-function configure_jpeg {
+# configures
+function configure_libjpeg() {
   CFLAGS=
-  if [[ $DEBUG -eq 1 ]]; then
-    CFLAGS=
+  if [[ "${IS_DEBUG}" -eq 1 ]]; then
+    CFLAGS='-fPIC -s EXPORT_ALL=1'
   else
-    CFLAGS='-O2'
+    CFLAGS='-fPIC -O2 -s EXPORT_ALL=1'
   fi
 
-set -x
-  (cd ${JPEG_DIR}; emconfigure ./configure CFLAGS=${CFLAGS})
-set +x
+  set -x
+  (cd "${LIBJPEG_DIR}"; emconfigure ./configure --enable-shared=no --enable-static=yes CFLAGS="${CFLAGS}")
+  set +x
 }
 
-function make_jpeg {
-set -x
-  (cd ${JPEG_DIR}; emmake make)
-set +x
+function make_libjpeg() {
+  set -x
+  (cd "${LIBJPEG_DIR}"; emmake make -j8 VERBOSE=1)
+  set +x
 }
 
-function clean_jpeg {
-set -x
-  (cd ${JPEG_DIR}; make distclean)
-set +x
+function clean_libjpeg() {
+  set -x
+  (cd "${LIBJPEG_DIR}"; make distclean)
+  set +x
 }
 
 # build libjpeg
-function jpeg {
-  if [[ $CLEAN -eq 1 ]]; then
+function build_libjpeg() {
+  if [[ "${IS_CLEAN}" -eq 1 ]]; then
     set +e
-    clean_jpeg
+    clean_libjpeg
     set -e
   fi
 
-  if [[ $CONFIGURE -eq 1 ]]; then
-    configure_jpeg
+  if [[ "${IS_CONFIGURE}" -eq 1 ]]; then
+    configure_libjpeg
   fi
 
-  if [[ $MAKE -eq 1 ]]; then
-    make_jpeg
+  if [[ "${IS_MAKE}" -eq 1 ]]; then
+    make_libjpeg
   fi
 }
 
-function jpegasm_build {
-  pushd ${SCRIPT_DIR}
+# build asm
+function build_jpegasm {
+  pushd "${SCRIPT_DIR}"
 
-  EMCC=emcc
-  CFLAGS=
-  PRE_POST=
+  local EMCC=emcc
+  local CFLAGS=
+  local PRE_POST=
 
-  if [[ $DEBUG -eq 1 ]]; then
+  if [[ "${IS_DEBUG}" -eq 1 ]]; then
     PRE_POST=
-    CFLAGS="-std=c11 -s ALLOW_MEMORY_GROWTH=1"
+    CFLAGS="-std=c11 -fPIC -s ALLOW_MEMORY_GROWTH=1"
   else
     PRE_POST=
-    CFLAGS="-std=c11 -O3 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
+    CFLAGS="-std=c11 -fPIC -O2 -s ALLOW_MEMORY_GROWTH=1 --memory-init-file 0"
   fi
 
-set -x
-  JPEG_SO_PATH=../deps/${JPEG_NAME}/.libs/libjpeg.so
+  local JPEG_A_PATH=
+  local C_API_PATH=
+  local EXP_FUNC_PATH=
 
-  mkdir -p ${ROOT_DIR}/build
-  cd ${ROOT_DIR}/build
-  ${EMCC} ${CFLAGS} -Wl,-l${JPEG_SO_PATH} ${SRC_DIR}/api.c -I../deps/${JPEG_NAME} -o lib${LIBNAME}.bc
-  ${EMCC} ${CFLAGS} ${PRE_POST} ${JPEG_SO_PATH} lib${LIBNAME}.bc -s EXPORTED_FUNCTIONS=@../scripts/exported_functions -o lib${LIBNAME}.js
-set +x
+  JPEG_A_PATH=$(readlink -f "../deps/${LIBJPEG_NAME}/.libs/libjpeg.a")
+  JPEG_INC_PATH=$(readlink -f "../deps/${LIBJPEG_NAME}")
+  C_API_PATH=$(readlink -f "${JPEGASM_DIR}/api.c")
+  EXP_FUNC_PATH=$(readlink -f "../scripts/exported_functions")
+
+  # TODO: check if -s MAIN_MODULE=1 is required
+  # TODO: '-s USE_LIBJPEG' can be used, but is pulls prev libjpeg version, 9c.
+
+  set -x
+  mkdir -p "${ROOT_DIR}/build"
+  cd "${ROOT_DIR}/build"
+  "${EMCC}" ${CFLAGS} "${C_API_PATH}" -I"${JPEG_INC_PATH}" -s SIDE_MODULE=1 -s EXPORT_ALL=1 -c -o lib"${LIBNAME}".bc
+  "${EMCC}" ${CFLAGS} "${PRE_POST}" "${JPEG_A_PATH}" lib${LIBNAME}.bc -s EXPORTED_FUNCTIONS=@"${EXP_FUNC_PATH}" -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap", "setValue", "getValue", "UTF8ToString"]' -s WASM=0 -o lib"${LIBNAME}".js
+  set +x
 
   popd
 }
 
-# build libjpegasm
-function jpegasm {
-  jpegasm_build
-}
-
 # Build the specified library
-function process_lib {
-  if [[ $LIBNAME =~ ^(jpeg|jpegasm)$ ]]; then
-    if [[ $LIBNAME == "jpeg" ]]; then
-      jpeg
+function build_target() {
+  if [[ "${LIBNAME}" =~ ^(jpeg|jpegasm)$ ]]; then
+    if [[ "${LIBNAME}" == "jpeg" ]]; then
+      build_libjpeg
     else
-      jpegasm
+      build_jpegasm
     fi
   else
-    fatal "Invalid library:$LIBNAME"
+    fatal "specified library should be 'jpeg' or 'jpegasm', got: ${LIBNAME}"
   fi
 }
 
@@ -138,7 +144,6 @@ if [ $# -eq 0 ]; then
   exit
 fi
 
-
 for i in "$@"
 do
   case $i in
@@ -147,19 +152,19 @@ do
       shift
       ;;
       -c|--configure)
-      CONFIGURE=1
+      IS_CONFIGURE=1
       shift
       ;;
       -m|--make)
-      MAKE=1
+      IS_MAKE=1
       shift
       ;;
       -p|--purge)
-      CLEAN=1
+      IS_CLEAN=1
       shift
       ;;
       -d|--debug)
-      DEBUG=1
+      IS_DEBUG=1
       shift
       ;;
       -h|--help)
@@ -174,4 +179,4 @@ do
   esac
 done
 
-process_lib
+build_target

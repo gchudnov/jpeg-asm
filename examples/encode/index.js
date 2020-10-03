@@ -53,10 +53,21 @@
   function encodeCanvasData() {
     try {
       var imageData = getImageData();
-
       var buf = imageData.data;
-      jpegasm.encode(buf, imageData.width, imageData.height, 80);
-      displayInfo('Image encoded successfully');
+
+      var options = {
+        width: imageData.width,
+        height: imageData.height,
+        quality: 80
+      };
+
+      jpegasm.encode(buf, options, function(err, encoded) {
+        if(err) {
+          displayError(err);
+        } else {
+          displayInfo('Image encoded as JPEG successfully: ' + encoded);
+        }
+      });
     } catch(err) {
       displayError(err);
     }

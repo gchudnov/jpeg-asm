@@ -1,5 +1,6 @@
 import gulp from 'gulp';
-import gutil from 'gulp-util';
+import log from 'fancy-log';
+import colors from 'ansi-colors';
 import browserify from 'browserify';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
@@ -12,10 +13,9 @@ import bundleLogger from '../lib/bundle-logger';
 import handleErrors from '../lib/handle-errors';
 import { IS_PRODUCTION, BROWSERIFY } from '../config';
 
-gulp.task('browserify', (next) => {
-
-  gutil.log('NODE_ENV:', gutil.colors.yellow(process.env.NODE_ENV));
-  gutil.log('IS_PRODUCTION:', gutil.colors.yellow(IS_PRODUCTION));
+function browserifyTask(next) {
+  log('NODE_ENV:', colors.yellow(process.env.NODE_ENV));
+  log('IS_PRODUCTION:', colors.yellow(IS_PRODUCTION));
 
   async.each(BROWSERIFY.bundleConfigs, (bundleConfig, cb) => {
     cb = once(cb);
@@ -39,11 +39,8 @@ gulp.task('browserify', (next) => {
         .on('error', handleErrors)
         .pipe(source(bundleConfig.outputName))
         .pipe(buffer())
-        .pipe(replace(/&&\s*!ENVIRONMENT_IS_WEB\s*&&\s*!ENVIRONMENT_IS_WORKER/, '')) // PATCH: cannot detect NODE in a browser.
-        .pipe(replace(/!!process\.platform\.match\(\/\^win\/\)/, 'false'))           // PATCH: process.platform is undefined
-        .pipe(replace(/process\[['"]stderr['"]\]\.write/, 'console.error'))          // PATCH: process.stderr is undefined
-        .pipe(replace(/process\[['"]stdout['"]\]\.write/, 'console.log'))            // PATCH: process.stdout is undefined
-        .pipe(gulpIf(IS_PRODUCTION, uglify())) // { mangle: false }
+        .pipe(replace(/typeof process.versions.node/, "'string'"))
+        .pipe(gulpIf(IS_PRODUCTION, uglify()))
         .pipe(gulp.dest(bundleConfig.dest))
         .on('end', handleEnd);
     };
@@ -51,4 +48,6 @@ gulp.task('browserify', (next) => {
     bundle();
 
   }, next);
-});
+}
+
+export { browserifyTask };
