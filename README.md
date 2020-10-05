@@ -4,7 +4,7 @@
 
 ![Node.js CI](https://github.com/gchudnov/jpeg-asm/workflows/Node.js%20CI/badge.svg)
 
-> Encoding and decoding images via libjpeg
+> Encoding and decoding images via libjpeg in JavaScript
 
 ```
 libjpeg version: 9d of 12-Jan-2020
@@ -13,6 +13,7 @@ libjpeg version: 9d of 12-Jan-2020
 ## Installation
 
 installing with npm:
+
 ```bash
 npm install jpeg-asm --save
 ```
