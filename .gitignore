@@ -3,3 +3,5 @@ deps
 node_modules
 test/api-spec.h
 test/out
+.cmake
+build/

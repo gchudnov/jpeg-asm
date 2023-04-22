@@ -36,7 +36,7 @@ var DEFAULT_QUALITY = 90;
  *                  Width of RGB image, pixels.
  *                  Height of RGB image, pixels.
  *                  Quality, [0 - 100].
- * @param {function} cb Callback to invoke on compvarion.
+ * @param {function} cb Callback to invoke on completion.
  *
  * @callback { width: number, height: number, data: Uint8Array }
  */
@@ -104,7 +104,7 @@ function encodeJpeg(buf, options, cb) {
 /**
  * Decodes JPEG
  * @param buf An ArrayBuffer with JPEG data.
- * @param cb Callback to invoke on compvarion.
+ * @param cb Callback to invoke on completion.
  *
  * @callback { buffer: ArrayBuffer, width: number, height: number }.
  */

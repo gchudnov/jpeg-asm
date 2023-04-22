@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.25)
 project(jpegasm)
 
 get_filename_component(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" PATH)

@@ -3,7 +3,7 @@
 ## Requirements
 
 - Emscripten 2.0.4
-- Libjpeg 9d
+- Libjpeg 9e
 
 ## Download emscripten
 
